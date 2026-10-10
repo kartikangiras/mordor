@@ -1,0 +1,5 @@
+-r services/requirements.txt
+pytest>=8
+cfn-lint>=1
+httpx2>=0.1
+uvicorn>=0.30
