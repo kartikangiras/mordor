@@ -1,0 +1,15 @@
+name: Bug report
+description: Something is wrong, on screen or in the data
+labels: [bug]
+body:
+  - type: textarea
+    attributes: { label: What happened }
+    validations: { required: true }
+  - type: textarea
+    attributes: { label: What you expected }
+  - type: input
+    attributes: { label: Where, description: URL or walkthrough step, and the run id from "About this run" for map or card issues }
+  - type: textarea
+    attributes: { label: How to reproduce }
+  - type: textarea
+    attributes: { label: Screenshots }

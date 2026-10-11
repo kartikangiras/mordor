@@ -1,0 +1,14 @@
+name: Feature request
+description: A capability, a data source, a surface
+labels: [enhancement]
+body:
+  - type: textarea
+    attributes: { label: The problem it solves, description: Who, downwind of what, deciding what }
+    validations: { required: true }
+  - type: textarea
+    attributes: { label: What you propose }
+  - type: textarea
+    attributes: { label: Provenance, description: Where would every number it shows come from? }
+    validations: { required: true }
+  - type: textarea
+    attributes: { label: Alternatives you considered }

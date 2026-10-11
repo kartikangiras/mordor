@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Python · ruff + pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt ruff
+      - run: ruff check services tools tests
+      - run: python -m pytest -q
+        env:
+          NOTIFY_USE_AGENT: "0"
+
+  web:
+    name: Web · typecheck + build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run build
+
+  infra:
+    name: Infra · sam validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+      - run: sam validate --lint --template infra/template.yaml --region us-east-1
+
+  secrets:
+    name: No secrets in the tree
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: grep for key shapes
+        run: |
+          ! git grep -n -I -E 'sk-ant-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|api[-_]?key=[A-Za-z0-9]{24,}' -- . ':!.github/workflows/ci.yml'
