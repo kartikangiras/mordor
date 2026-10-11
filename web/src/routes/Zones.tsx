@@ -1,100 +1,119 @@
-// /zones — the cities ranked by what the air does to them, with the fire share and the traffic
-// tracer side by side; and the active burning areas with their 48 h risk score.
+// /zones — the cities ranked by what the air does to them (PIVOT_PLAN.md task 45): one row per
+// zone at every width, the total as the row's number, the fire part of the bar only when there is
+// one, the arrival only when it is within 48 h, and the tracer numbers behind one control. Then
+// the five cells most likely to burn next, with tonight's detections inline.
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '@/lib/store'
 import { BURN_CATS, TIERS, type TierId } from '@/lib/aqi'
-import { istLabel } from '@/lib/time'
+import type { Zone } from '@/lib/api'
+import { istClock, istLabel } from '@/lib/time'
 import Footer from '@/components/Footer'
+import PageBackdrop from '@/components/PageBackdrop'
 
-function Bar({ bg, fire, max }: { bg: number; fire: number | null; max: number }) {
-  const w = (v: number) => `${Math.max(0, Math.min(100, (v / max) * 100))}%`
+const fmtM = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(1)} M` : `${Math.round(n / 1e3)} k`)
+
+function Row({ z, i, mode, max, guideline }: { z: Zone; i: number; mode: 'now' | 'peak'; max: number; guideline: string | null }) {
+  const [more, setMore] = useState(false)
+  const v = mode === 'now' ? z.now : z.peak
+  const total = Math.round(v.pm25Total ?? v.pm25Background)
+  const fire = v.pm25Fire !== null && v.pm25Fire >= 0.5 ? Math.round(v.pm25Fire) : 0
+  const share = v.pm25Total && v.pm25Fire !== null ? Math.round((v.pm25Fire / v.pm25Total) * 100) : null
+  const tier = TIERS[v.tier as TierId] ?? TIERS.T0
+  const w = (x: number) => `${Math.max(0, Math.min(100, (x / max) * 100))}%`
+  const arrival = z.arrivalHour === null ? null : z.arrivalHour === 0 ? 'smoke already here' : `smoke in ${z.arrivalHour} h`
   return (
-    <div className="flex h-3 w-full overflow-hidden rounded-sm bg-ink">
-      <div style={{ width: w(bg), background: '#8b95a3' }} title={`background ${bg}`} />
-      {fire !== null && <div style={{ width: w(fire), background: '#d75b4a' }} title={`fire ${fire}`} />}
-    </div>
+    <li className="glass glass-tight px-4 py-3" data-zone={z.id}>
+      <div className="grid grid-cols-[28px_1fr_auto] items-start gap-x-3 sm:grid-cols-[28px_minmax(0,1.3fr)_minmax(0,1fr)_auto]">
+        <div className="pt-0.5 font-mono text-[12px] text-mute">{i + 1}</div>
+        <div className="min-w-0">
+          <div className="truncate text-[15px] font-semibold text-fg">{z.name} <span className="font-normal text-mute">{z.name_hi}</span></div>
+          <div className="font-mono text-[10.5px] text-mute">{z.region} · ~{fmtM(z.population)} people</div>
+        </div>
+        <div className="col-span-3 mt-2 max-sm:order-3 sm:col-span-1 sm:mt-0">
+          <div className="flex items-baseline gap-2"><span className="font-mono text-[22px] font-light leading-none text-fg">{total}</span><span className="font-mono text-[10px] tracking-wider text-mute">µg/m³ · AQI {v.aqi}</span></div>
+          <div className="mt-1.5 flex h-2 w-full overflow-hidden rounded-sm bg-white/10">
+            <div style={{ width: w(v.pm25Background), background: '#8b95a3' }} />
+            {fire > 0 && <div style={{ width: w(fire), background: '#d75b4a' }} />}
+          </div>
+          {fire > 0 && <div className="mt-1 font-mono text-[10px] text-[#ff8a75]">fire +{fire} µg/m³{share !== null ? ` · ${share}% of the total` : ''}</div>}
+        </div>
+        <div className="flex flex-col items-end gap-1 text-right max-sm:order-2 max-sm:col-start-2 max-sm:mt-1 max-sm:flex-row max-sm:flex-wrap max-sm:items-center max-sm:gap-x-2 max-sm:text-left">
+          <span className="rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold text-ink" style={{ background: tier.colour }}>{tier.label}</span>
+          {arrival && <span className="font-mono text-[10px] text-fire">{arrival}</span>}
+          {guideline && <span className="text-[11px] leading-snug text-fg/80 sm:max-w-[160px]">{guideline}</span>}
+        </div>
+      </div>
+      <button type="button" onClick={() => setMore(!more)} className="mt-1.5 font-mono text-[10px] text-mute underline hover:text-fg" aria-expanded={more}>{more ? 'less' : 'more'}</button>
+      {more && (
+        <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 font-mono text-[11px]">
+          <dt className="text-mute">background</dt><dd className="text-fg/90">{Math.round(v.pm25Background)} µg/m³ (CAMS: traffic, industry, dust)</dd>
+          <dt className="text-mute">fire share</dt><dd className="text-fg/90">{share === null ? 'not calibrated' : `${share}%`}</dd>
+          <dt className="text-mute">NO2 tracer</dt><dd className="text-fg/90">{v.no2 === null ? '—' : `${Math.round(v.no2)} µg/m³ · ${v.no2Band}`}</dd>
+          {z.peak.t && <><dt className="text-mute">peak</dt><dd className="text-fg/90">{istLabel(z.peak.t)} IST · {Math.round(z.peak.pm25Total ?? z.peak.pm25Background)} µg/m³ · {TIERS[z.peak.tier as TierId]?.label ?? z.peak.tier}</dd></>}
+          {z.arrivalT && <><dt className="text-mute">smoke arrives</dt><dd className="text-fg/90">{istLabel(z.arrivalT)} IST</dd></>}
+        </dl>
+      )}
+    </li>
   )
 }
 
 export default function Zones() {
   const { manifest, zones, burning, guidelines, load } = useStore()
   const [mode, setMode] = useState<'now' | 'peak'>('now')
+  const [method, setMethod] = useState(false)
   useEffect(() => { if (!manifest) void load() }, [manifest, load])
   if (!manifest) return <div className="p-6 font-mono text-xs text-mute">loading run…</div>
   if (!zones) return <div className="p-6 font-mono text-xs text-mute">This run has no zones file. Re-run the pipeline.</div>
   const order = mode === 'now' ? zones.rankingNow : zones.rankingPeak
   const rows = order.map((id) => zones.zones.find((z) => z.id === id)!).filter(Boolean)
   const max = Math.max(...rows.map((z) => (mode === 'now' ? z.now.pm25Total ?? z.now.pm25Background : z.peak.pm25Total ?? z.peak.pm25Background)), 60)
+  const burningNow = new Map(burning?.topBurning.map((a) => [`${a.i}-${a.j}`, a]) ?? [])
+  const top = burning?.topRisk.slice(0, 5) ?? []
   return (
-    <div className="min-h-full bg-ink px-4 py-4 text-fg">
-      <div className="mx-auto max-w-4xl font-mono text-xs text-mute">
+    <div className="relative min-h-full text-fg">
+      <PageBackdrop image="haze" position="55% 45%" />
+      <div className="relative mx-auto max-w-3xl px-4 py-6">
         <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-fire">Zones</div>
-        <h1 className="font-sans text-xl font-semibold text-fg">Exposure zones</h1>
-        <p className="mt-1 font-sans text-[13px] leading-relaxed">{zones.note}</p>
-        <div className="mt-3 flex gap-1">
+        <h1 className="text-2xl font-semibold tracking-tight">Exposure zones</h1>
+        <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-mute">{zones.note}</p>
+        <div className="mt-4 inline-flex rounded-full border border-white/10 bg-white/5 p-1 font-mono text-[11px]" role="tablist" aria-label="Moment">
           {(['now', 'peak'] as const).map((m) => (
-            <button key={m} type="button" onClick={() => setMode(m)} className={`h-9 rounded border border-line px-3 ${mode === m ? 'bg-panel text-fg' : ''}`}>{m === 'now' ? `now · ${istLabel(zones.hours[0])} IST` : 'peak in the next 48 h'}</button>
+            <button key={m} type="button" role="tab" aria-selected={mode === m} onClick={() => setMode(m)} className={`h-8 rounded-full px-3 transition ${mode === m ? 'bg-fire text-ink' : 'text-mute hover:text-fg'}`}>{m === 'now' ? `now · ${istClock(zones.hours[0])}` : 'peak in 48 h'}</button>
           ))}
         </div>
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[860px]">
-            <thead><tr className="text-left"><th>#</th><th>zone</th><th className="w-48">background + fire, µg/m³</th><th className="text-right">total</th><th className="text-right">AQI</th><th>tier</th><th className="text-right">fire share</th><th className="text-right">NO2 tracer</th><th className="pr-4 text-right">smoke arrives</th><th className="w-40">what to do</th></tr></thead>
-            <tbody>
-              {rows.map((z, i) => {
-                const v = mode === 'now' ? z.now : z.peak
-                const total = v.pm25Total ?? v.pm25Background
-                const share = v.pm25Total && v.pm25Fire !== null ? v.pm25Fire / v.pm25Total : null
-                const tier = TIERS[v.tier as TierId]
-                return (
-                  <tr key={z.id} className="border-t border-line">
-                    <td className="py-1.5">{i + 1}</td>
-                    <td className="text-fg">{z.name} <span className="text-mute">{z.name_hi}</span><div className="text-[10px]">{z.region} · ~{(z.population / 1e6).toFixed(1)} M</div></td>
-                    <td><Bar bg={v.pm25Background} fire={v.pm25Fire} max={max} /></td>
-                    <td className="text-right text-fg">{Math.round(total)}</td>
-                    <td className="text-right">{v.aqi}</td>
-                    <td><span className="rounded px-1.5 py-0.5 text-[10px] font-semibold text-ink" style={{ background: tier.colour }}>{v.tier} {tier.label}</span></td>
-                    <td className="text-right">{share === null ? '—' : `${Math.round(share * 100)}%`}</td>
-                    <td className="text-right">{v.no2 === null ? '—' : `${Math.round(v.no2)} · ${v.no2Band}`}</td>
-                    <td className="pr-4 text-right">{z.arrivalHour === null ? 'not in 48 h' : z.arrivalHour === 0 ? 'already here' : `+${z.arrivalHour} h`}{mode === 'peak' && z.peak.t ? <div className="text-[10px]">peak {istLabel(z.peak.t)}</div> : null}</td>
-                    <td className="font-sans text-[11px] text-fg/80" title={guidelines?.[(z.worstTier in TIERS ? z.worstTier : 'T0') as TierId]?.outdoor}>{guidelines?.[(z.worstTier in TIERS ? z.worstTier : 'T0') as TierId]?.title ?? '—'}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-        <div className="mt-1 text-[10px]">grey = CAMS background (traffic, industry, dust, everything that is not stubble) · red = our stubble-fire increment · NO2 bands follow the European index (low &lt;40, moderate &lt;90, high &lt;120, very high &lt;230 µg/m³)</div>
+        <ol className="mt-3 space-y-2" data-zone-list>
+          {rows.map((z, i) => <Row key={z.id} z={z} i={i} mode={mode} max={max} guideline={guidelines?.[(z.worstTier in TIERS ? z.worstTier : 'T0') as TierId]?.title ?? null} />)}
+        </ol>
+        <div className="mt-2 font-mono text-[10px] text-mute">grey = CAMS background · red = the stubble-fire increment, drawn when it is at least 0.5 µg/m³</div>
 
         {burning && (
-          <>
-            <h2 className="mt-8 font-sans text-lg font-semibold text-fg">Active burning areas and 48 h burning risk</h2>
-            <p className="mt-1 font-sans text-[13px] leading-relaxed">{burning.method} Inputs this run: {burning.inputs.fires48} detections in 48 h{burning.inputs.climatology ? ', 2024 climatology' : ''}{burning.inputs.ndvi ? `, NDVI change ${burning.ndvi?.prevDate} → ${burning.ndvi?.date}` : ''}{burning.inputs.rain ? ', forecast rain' : ''}.</p>
-            <div className="mt-3 grid gap-4 md:grid-cols-2">
-              <div className="rounded border border-line bg-panel p-3">
-                <div className="mb-1 text-fg">burning now · top 8 cells by detections in 24 h</div>
-                {burning.topBurning.map((a, i) => (
-                  <div key={`${a.i}-${a.j}`} className="flex items-center justify-between border-t border-line py-1">
-                    <span>{i + 1}. {a.name}</span>
-                    <span className="text-fg">{a.fires24} fires <span className="text-mute">({a.trend >= 0 ? '+' : ''}{a.trend} vs prev 24 h · {a.frp24} MW)</span></span>
-                  </div>
-                ))}
-              </div>
-              <div className="rounded border border-line bg-panel p-3">
-                <div className="mb-1 text-fg">highest burning risk, next 48 h</div>
-                {burning.topRisk.map((a, i) => {
-                  const cat = BURN_CATS.find((c) => c.label === a.category) ?? BURN_CATS[0]
-                  return (
-                    <div key={`${a.i}-${a.j}`} className="flex items-center justify-between border-t border-line py-1">
-                      <span>{i + 1}. {a.name}</span>
-                      <span><span className="rounded px-1.5 py-0.5 text-[10px] font-semibold text-ink" style={{ background: cat.colour }}>{a.score} {a.category}</span> <span className="text-[10px]">NDVI {a.ndviChange === null ? '—' : a.ndviChange.toFixed(2)} · rain {a.rain48mm ?? '—'} mm</span></span>
+          <section className="mt-8" data-burning>
+            <h2 className="text-lg font-semibold tracking-tight text-fg">Where it burns next</h2>
+            <p className="mt-1 text-[13px] leading-relaxed text-mute">
+              The five cells most likely to burn in the next 48 h, scored 0–100 from recent detections, their trend, last season, the vegetation drop and the rain due. {burning.inputs.fires48} detections in the last 48 h this run.
+              {' '}<button type="button" onClick={() => setMethod(!method)} className="font-mono text-[11px] underline hover:text-fg" aria-expanded={method}>{method ? 'less' : 'how the score is built'}</button>
+            </p>
+            {method && <p className="mt-1 font-mono text-[11px] leading-relaxed text-mute">{burning.method}{burning.ndvi ? ` NDVI change ${burning.ndvi.prevDate} → ${burning.ndvi.date}.` : ''}</p>}
+            <ol className="mt-3 space-y-2">
+              {top.map((a, i) => {
+                const cat = BURN_CATS.find((c) => c.label === a.category) ?? BURN_CATS[0]
+                const now = burningNow.get(`${a.i}-${a.j}`)
+                return (
+                  <li key={`${a.i}-${a.j}`} className="glass glass-tight flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 py-2.5">
+                    <div className="flex items-center gap-3"><span className="font-mono text-[12px] text-mute">{i + 1}</span><span className="text-[14px] font-medium text-fg">{a.name}</span></div>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10.5px] text-mute">
+                      <span>{now ? `${now.fires24} fire${now.fires24 === 1 ? '' : 's'} in 24 h` : a.fires48 ? `${a.fires48} in 48 h` : 'no detections yet'}</span>
+                      <span>NDVI {a.ndviChange === null ? '—' : a.ndviChange.toFixed(2)}</span>
+                      <span>rain {a.rain48mm ?? '—'} mm</span>
+                      <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold text-ink" style={{ background: cat.colour }}>{a.score} {a.category}</span>
                     </div>
-                  )
-                })}
-              </div>
-            </div>
-            <div className="mt-2 text-[10px]"><Link to="/map?layers=fires,burnrisk,ndvi" className="underline">Open the map with the burn-risk and crop-cover layers</Link> to see every cell; click a cell for its score components.</div>
-          </>
+                  </li>
+                )
+              })}
+            </ol>
+            <div className="mt-2 font-mono text-[10.5px] text-mute"><Link to="/map?layers=fires,burnrisk,ndvi" className="underline hover:text-fg">Open the map with the burn-risk and crop-cover layers</Link> to see every cell.</div>
+          </section>
         )}
         <Footer runId={manifest.runId} generatedAt={manifest.generatedAt} calibration={manifest.calibration} disclaimer={manifest.disclaimer} />
       </div>
