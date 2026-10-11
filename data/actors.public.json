@@ -1,0 +1,82 @@
+{
+ "generatedAt": "2026-10-10T20:07:12Z",
+ "entities": [
+  {
+   "id": "osm-way-388242027",
+   "type": "school",
+   "name": "Kendriya Vidyalaya, Rohini",
+   "name_hi": "केंद्रीय विद्यालय, रोहिणी",
+   "lat": 28.7041,
+   "lon": 77.102829,
+   "hours": [
+    "08:00",
+    "14:00"
+   ],
+   "dismissal": [
+    "15:00",
+    "16:00"
+   ],
+   "hasPurifiers": false,
+   "students": 1200,
+   "demo": true,
+   "persona": "Anita",
+   "onboarded": false
+  },
+  {
+   "id": "rwa-demo-rohini",
+   "type": "rwa",
+   "name": "Rohini Sector 3 RWA (demo)",
+   "name_hi": "रोहिणी सेक्टर 3 आरडब्ल्यूए",
+   "lat": 28.708,
+   "lon": 77.112,
+   "hours": [
+    "06:00",
+    "09:00"
+   ],
+   "dismissal": [
+    "17:00",
+    "21:00"
+   ],
+   "hasPurifiers": false,
+   "residents": 2400,
+   "demo": true,
+   "persona": "Rekha",
+   "onboarded": false
+  },
+  {
+   "id": "hosp-demo-rohini",
+   "type": "hospital",
+   "name": "District Hospital, Rohini (demo)",
+   "name_hi": "ज़िला अस्पताल, रोहिणी",
+   "lat": 28.716,
+   "lon": 77.117,
+   "hours": [
+    "06:00",
+    "14:00"
+   ],
+   "dismissal": [
+    "14:00",
+    "22:00"
+   ],
+   "hasPurifiers": true,
+   "beds": 40,
+   "demo": true,
+   "persona": "Dr. Kapoor",
+   "onboarded": false
+  },
+  {
+   "id": "dao-demo-sangrur",
+   "type": "agri_officer",
+   "name": "District Agriculture Office, Sangrur (demo)",
+   "name_hi": "ज़िला कृषि कार्यालय, संगरूर",
+   "lat": 30.25,
+   "lon": 75.84,
+   "machines": 180,
+   "district": "Sangrur",
+   "radiusKm": 45,
+   "demo": true,
+   "persona": "Gurpreet",
+   "onboarded": false
+  }
+ ]
+}

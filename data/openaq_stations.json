@@ -1,0 +1,1082 @@
+{
+ "source": "openaq-data-archive (AWS Open Data), keyless",
+ "months": [
+  "2025-11",
+  "2024-11"
+ ],
+ "idRange": [
+  1,
+  12000
+ ],
+ "stations": [
+  {
+   "id": 17,
+   "sensorId": 12234787,
+   "name": "R K Puram, Delhi - DPCC-3379481",
+   "lat": 28.563262,
+   "lon": 77.186937,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 50,
+   "sensorId": 12234796,
+   "name": "Punjabi Bagh, Delhi - DPCC-3379482",
+   "lat": 28.674045,
+   "lon": 77.131023,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 235,
+   "sensorId": 12235610,
+   "name": "Anand Vihar, New Delhi - DPCC-3379575",
+   "lat": 28.646835,
+   "lon": 77.316032,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 301,
+   "sensorId": 14258988,
+   "name": "Vikas Sadan, Gurugram - HSPCB-5945694",
+   "lat": 28.4501238,
+   "lon": 77.0263051,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 28
+   }
+  },
+  {
+   "id": 860,
+   "sensorId": 12235662,
+   "name": "Sanjay Palace, Agra - UPPCB-3379581",
+   "lat": 27.19865833,
+   "lon": 78.00598056,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 2583,
+   "sensorId": 12328443,
+   "name": "Sector-6, Panchkula - HSPCB -3490425",
+   "lat": 30.7057778,
+   "lon": 76.85318056,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5404,
+   "sensorId": 12234702,
+   "name": "Pusa, Delhi - IMD-3379470",
+   "lat": 28.639645,
+   "lon": 77.146263,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5541,
+   "sensorId": 12234684,
+   "name": "Burari Crossing, New Delhi - IMD-3379467",
+   "lat": 28.7256504,
+   "lon": 77.2011573,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5542,
+   "sensorId": 12235151,
+   "name": "Civil Line, Jalandhar - PPCB-3379522",
+   "lat": 31.321907,
+   "lon": 75.578914,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5544,
+   "sensorId": 12235142,
+   "name": "Model Town, Patiala - PPCB-3379521",
+   "lat": 30.349388,
+   "lon": 76.366642,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5551,
+   "sensorId": 12235443,
+   "name": "Golden Temple, Amritsar - PPCB-3379556",
+   "lat": 31.62,
+   "lon": 74.876512,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5569,
+   "sensorId": 12235426,
+   "name": "Punjab Agricultural University, Ludhiana - PPCB-3379554",
+   "lat": 30.9028,
+   "lon": 75.8086,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5570,
+   "sensorId": 12234708,
+   "name": "Aya Nagar, New Delhi - IMD-3379471",
+   "lat": 28.474261,
+   "lon": 77.131606,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5576,
+   "sensorId": 12234823,
+   "name": "Moti Doongri, Alwar - RSPCB-3379485",
+   "lat": 27.554793,
+   "lon": 76.611536,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5586,
+   "sensorId": 12234769,
+   "name": "Sirifort, Delhi - CPCB-3379479",
+   "lat": 28.5504249,
+   "lon": 77.2159377,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5588,
+   "sensorId": 12234832,
+   "name": "RIICO Ind. Area III, Bhiwadi - RSPCB-3379486",
+   "lat": 28.194909,
+   "lon": 76.862296,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5598,
+   "sensorId": 12235187,
+   "name": "Sector - 125, Noida, UP - UPPCB-3379526",
+   "lat": 28.5447608,
+   "lon": 77.3231257,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5610,
+   "sensorId": 12234690,
+   "name": "North Campus, DU, Delhi - IMD-3379468",
+   "lat": 28.6573814,
+   "lon": 77.1585447,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5613,
+   "sensorId": 12234753,
+   "name": "ITO, New Delhi - CPCB-3379477",
+   "lat": 28.628624,
+   "lon": 77.24106,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5616,
+   "sensorId": 12234720,
+   "name": "Sector - 62, Noida, UP - IMD-3379473",
+   "lat": 28.6245479,
+   "lon": 77.3577104,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5622,
+   "sensorId": 12234744,
+   "name": "NSIT Dwarka, Delhi - CPCB-3379476",
+   "lat": 28.60909,
+   "lon": 77.0325413,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5625,
+   "sensorId": 12235434,
+   "name": "RIMT University, Mandi Gobindgarh - PPCB-3379555",
+   "lat": 30.649961,
+   "lon": 76.331442,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5626,
+   "sensorId": 12234760,
+   "name": "DTU, New Delhi - CPCB-3379478",
+   "lat": 28.7500499,
+   "lon": 77.1112615,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5627,
+   "sensorId": 12234678,
+   "name": "CRRI Mathura Road, New Delhi - IMD-3379466",
+   "lat": 28.5512005,
+   "lon": 77.2735737,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5630,
+   "sensorId": 12234726,
+   "name": "Shadipur, Delhi - CPCB-3379474",
+   "lat": 28.6514781,
+   "lon": 77.1473105,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5634,
+   "sensorId": 12234714,
+   "name": "Lodhi Road, New Delhi - IMD-3379472",
+   "lat": 28.5918245,
+   "lon": 77.2273074,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5650,
+   "sensorId": 12234696,
+   "name": "IGI Airport (T3), Delhi - IMD-3379469",
+   "lat": 28.5627763,
+   "lon": 77.1180053,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 5665,
+   "sensorId": 12235160,
+   "name": "Vasundhara, Ghaziabad - UPPCB-3379523",
+   "lat": 28.6603346,
+   "lon": 77.3572563,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 29
+   }
+  },
+  {
+   "id": 6356,
+   "sensorId": 12235321,
+   "name": "Pusa, Delhi - DPCC-3379541",
+   "lat": 28.639645,
+   "lon": 77.146262,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6358,
+   "sensorId": 12234778,
+   "name": "Mandir Marg, New Delhi - DPCC-3379480",
+   "lat": 28.636429,
+   "lon": 77.201067,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6359,
+   "sensorId": 12234735,
+   "name": "IHBAS, Dilshad Garden,New Delhi - CPCB-3379475",
+   "lat": 28.6811736,
+   "lon": 77.3025234,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6442,
+   "sensorId": 12291454,
+   "name": "Ratanpura, Rupnagar - Ambuja Cements-3446016",
+   "lat": 31.0325454,
+   "lon": 76.5623046,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 25
+   }
+  },
+  {
+   "id": 6923,
+   "sensorId": 12235222,
+   "name": "New Mandi, Muzaffarnagar - UPPCB-3379530",
+   "lat": 29.4723508,
+   "lon": 77.7194031,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6924,
+   "sensorId": 12235779,
+   "name": "Indirapuram, Ghaziabad - UPPCB-3379596",
+   "lat": 28.646233,
+   "lon": 77.358075,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6929,
+   "sensorId": 12235047,
+   "name": "Major Dhyan Chand National Stadium, Delhi - DPCC-3379510",
+   "lat": 28.611281,
+   "lon": 77.237738,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6930,
+   "sensorId": 12961441,
+   "name": "Gobind Pura, Yamuna Nagar - HSPCB-4268032",
+   "lat": 30.1480566,
+   "lon": 77.2893471,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6931,
+   "sensorId": 12235020,
+   "name": "Dwarka-Sector 8, Delhi - DPCC -3379507",
+   "lat": 28.5710274,
+   "lon": 77.0719006,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6932,
+   "sensorId": 12235698,
+   "name": "Alipur, Delhi - DPCC-3379585",
+   "lat": 28.815329,
+   "lon": 77.15301,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6934,
+   "sensorId": 12235011,
+   "name": "Dr. Karni Singh Shooting Range, Delhi - DPCC-3379506",
+   "lat": 28.498571,
+   "lon": 77.26484,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6935,
+   "sensorId": 14414782,
+   "name": "Urban Estate-II, Hisar - HSPCB-6070473",
+   "lat": 29.14056,
+   "lon": 75.744941,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6936,
+   "sensorId": 14233904,
+   "name": "Arya Nagar, Bahadurgarh - HSPCB-5911905",
+   "lat": 28.6701,
+   "lon": 76.9254,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6938,
+   "sensorId": 12235133,
+   "name": "Vivek Vihar, Delhi - DPCC-3379520",
+   "lat": 28.672342,
+   "lon": 77.31526,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6939,
+   "sensorId": 12235213,
+   "name": "Hardev Nagar, Bathinda - PPCB-3379529",
+   "lat": 30.233011,
+   "lon": 74.907758,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 26
+   }
+  },
+  {
+   "id": 6940,
+   "sensorId": 12235178,
+   "name": "Kalal Majra, Khanna - PPCB-3379525",
+   "lat": 30.736056,
+   "lon": 76.209694,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6944,
+   "sensorId": 12251164,
+   "name": "H.B. Colony, Bhiwani - HSPCB-3395856",
+   "lat": 28.806223,
+   "lon": 76.141105,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6947,
+   "sensorId": 14216055,
+   "name": "General Hospital, Mandikhera - HSPCB-5889068",
+   "lat": 27.9002,
+   "lon": 76.9938,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6949,
+   "sensorId": 14291091,
+   "name": "Municipal Corporation Office, Dharuhera -  HSPCB-5990469",
+   "lat": 28.2068,
+   "lon": 76.7997,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6951,
+   "sensorId": 14258143,
+   "name": "Murthal, Sonipat - HSPCB-5944739",
+   "lat": 29.0272,
+   "lon": 77.0621,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6952,
+   "sensorId": 13604856,
+   "name": "F-Block, Sirsa - HSPCB-5050625",
+   "lat": 29.5364,
+   "lon": 75.0158,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6953,
+   "sensorId": 14250045,
+   "name": "Sector-2 IMT, Manesar - HSPCB-5933785",
+   "lat": 28.360699,
+   "lon": 76.93609,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6957,
+   "sensorId": 12235038,
+   "name": "Jawaharlal Nehru Stadium, Delhi - DPCC-3379509",
+   "lat": 28.58028,
+   "lon": 77.233829,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6958,
+   "sensorId": 14248667,
+   "name": "Sector-18, Panipat - HSPCB-5931791",
+   "lat": 29.435587,
+   "lon": 76.975531,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 29
+   }
+  },
+  {
+   "id": 6960,
+   "sensorId": 12235101,
+   "name": "Patparganj, Delhi - DPCC-3379516",
+   "lat": 28.623748,
+   "lon": 77.287205,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6963,
+   "sensorId": 14259006,
+   "name": "Police Lines, Jind - HSPCB-5945766",
+   "lat": 29.307814,
+   "lon": 76.337619,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6964,
+   "sensorId": 14258997,
+   "name": "Patti Mehar, Ambala - HSPCB-5945763",
+   "lat": 30.379589,
+   "lon": 76.778328,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6969,
+   "sensorId": 14347156,
+   "name": "Huda Sector, Fatehabad - HSPCB-6061224",
+   "lat": 29.503664,
+   "lon": 75.467934,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6970,
+   "sensorId": 14224812,
+   "name": "Shastri Nagar, Narnaul - HSPCB-5899754",
+   "lat": 28.060249,
+   "lon": 76.113115,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6971,
+   "sensorId": 12353756,
+   "name": "Rishi Nagar, Kaithal - HSPCB-3521825",
+   "lat": 29.8006,
+   "lon": 76.4155,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6972,
+   "sensorId": 14283600,
+   "name": "Nathu Colony, Ballabgarh - HSPCB-5980647",
+   "lat": 28.3419248,
+   "lon": 77.319699,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6976,
+   "sensorId": 12235869,
+   "name": "Jai Bhim Nagar, Meerut - UPPCB-3379607",
+   "lat": 28.9535882,
+   "lon": 77.7622941,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6978,
+   "sensorId": 12235196,
+   "name": "Knowledge Park - III, Greater Noida - UPPCB-3379527",
+   "lat": 28.47272,
+   "lon": 77.482,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6980,
+   "sensorId": 12235951,
+   "name": "Sector-1, Noida - UPPCB-3379617",
+   "lat": 28.589247,
+   "lon": 77.321962,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6985,
+   "sensorId": 12235205,
+   "name": "Yamunapuram, Bulandshahr - UPPCB-3379528",
+   "lat": 28.406963,
+   "lon": 77.849831,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6986,
+   "sensorId": 12235935,
+   "name": "Knowledge Park - V, Greater Noida - UPPCB-3379615",
+   "lat": 28.557054,
+   "lon": 77.453663,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 6988,
+   "sensorId": 12235942,
+   "name": "Sector-116, Noida - UPPCB-3379616",
+   "lat": 28.56923,
+   "lon": 77.393848,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 7005,
+   "sensorId": 12235787,
+   "name": "Loni, Ghaziabad - UPPCB-3379597",
+   "lat": 28.757294,
+   "lon": 77.278792,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 7280,
+   "sensorId": 14249204,
+   "name": "Shyam Nagar, Palwal - HSPCB-5932761",
+   "lat": 28.1485564,
+   "lon": 77.3320667,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 7282,
+   "sensorId": 14234413,
+   "name": "Sector-7, Kurukshetra - HSPCB-5912855",
+   "lat": 29.966942,
+   "lon": 76.875879,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 7283,
+   "sensorId": 12599853,
+   "name": "MD University, Rohtak - HSPCB-3825599",
+   "lat": 28.87793,
+   "lon": 76.620825,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 7720,
+   "sensorId": 12236075,
+   "name": "Pallavpuram Phase 2, Meerut - UPPCB-3379631",
+   "lat": 29.06351,
+   "lon": 77.709723,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 7833,
+   "sensorId": 12236084,
+   "name": "Ganga Nagar, Meerut - UPPCB-3379632",
+   "lat": 28.999264,
+   "lon": 77.7590354,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 8118,
+   "sensorId": 23534,
+   "name": "New Delhi-8118",
+   "lat": 28.63576,
+   "lon": 77.22445,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 29,
+    "2024-11": 30
+   }
+  },
+  {
+   "id": 8235,
+   "sensorId": 12235029,
+   "name": "Jahangirpuri, Delhi - DPCC-3379508",
+   "lat": 28.73282,
+   "lon": 77.170633,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 8239,
+   "sensorId": 12235074,
+   "name": "Okhla Phase-2, Delhi - DPCC-3379513",
+   "lat": 28.530785,
+   "lon": 77.271255,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 8319,
+   "sensorId": 12235689,
+   "name": "Anand Vihar, Hapur - UPPCB-3379584",
+   "lat": 28.725645,
+   "lon": 77.749675,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 8365,
+   "sensorId": 12235083,
+   "name": "Nehru Nagar, Delhi - DPCC-3379514",
+   "lat": 28.56789,
+   "lon": 77.250515,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 8472,
+   "sensorId": 12235294,
+   "name": "Bawana, Delhi - DPCC-3379538",
+   "lat": 28.7762,
+   "lon": 77.051074,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 8475,
+   "sensorId": 12235110,
+   "name": "Sonia Vihar, Delhi - DPCC-3379517",
+   "lat": 28.710508,
+   "lon": 77.249485,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 8915,
+   "sensorId": 12235124,
+   "name": "Wazirpur, Delhi - DPCC-3379519",
+   "lat": 28.699793,
+   "lon": 77.165453,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 8917,
+   "sensorId": 12235002,
+   "name": "Ashok Vihar, Delhi - DPCC-3379505",
+   "lat": 28.695381,
+   "lon": 77.181665,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10484,
+   "sensorId": 12235312,
+   "name": "Sri Aurobindo Marg, Delhi - DPCC-3379540",
+   "lat": 28.531346,
+   "lon": 77.190156,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10485,
+   "sensorId": 12235056,
+   "name": "Narela, Delhi - DPCC-3379511",
+   "lat": 28.822836,
+   "lon": 77.101981,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10486,
+   "sensorId": 12235303,
+   "name": "Mundka, Delhi - DPCC-3379539",
+   "lat": 28.684678,
+   "lon": 77.076574,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10488,
+   "sensorId": 12235065,
+   "name": "Najafgarh, Delhi - DPCC-3379512",
+   "lat": 28.570173,
+   "lon": 76.933762,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10725,
+   "sensorId": 12236218,
+   "name": "Mini Secretariat, Charkhi Dadri - HSPCB-3379648",
+   "lat": 28.593883,
+   "lon": 76.270653,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10820,
+   "sensorId": 12236236,
+   "name": "Sector 30, Faridabad - HSPCB-3379650",
+   "lat": 28.4417,
+   "lon": 77.3217,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10825,
+   "sensorId": 12236259,
+   "name": "Sector-51, Gurugram - HSPCB-3379653",
+   "lat": 28.4227,
+   "lon": 77.0667,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10831,
+   "sensorId": 12235092,
+   "name": "Rohini, Delhi - DPCC-3379515",
+   "lat": 28.732528,
+   "lon": 77.11992,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10900,
+   "sensorId": 12236251,
+   "name": "Teri Gram, Gurugram - HSPCB-3379652",
+   "lat": 28.4275,
+   "lon": 77.1465,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 29
+   }
+  },
+  {
+   "id": 10908,
+   "sensorId": 12236245,
+   "name": "Sector 11, Faridabad - HSPCB-3379651",
+   "lat": 28.376058,
+   "lon": 77.315741,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 29
+   }
+  },
+  {
+   "id": 10910,
+   "sensorId": 14275735,
+   "name": "Sector-12, Karnal - HSPCB-5969618",
+   "lat": 29.6953,
+   "lon": 77.0027,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10914,
+   "sensorId": 12235976,
+   "name": "Sector-25, Chandigarh - CPCC-3379620",
+   "lat": 30.751462,
+   "lon": 76.762879,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10919,
+   "sensorId": 12235770,
+   "name": "Sanjay Nagar, Ghaziabad - UPPCB-3379595",
+   "lat": 28.685382,
+   "lon": 77.453839,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10920,
+   "sensorId": 12236227,
+   "name": "New Industrial Town, Faridabad - HSPCB-3379649",
+   "lat": 28.39072,
+   "lon": 77.30059,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 10921,
+   "sensorId": 12235707,
+   "name": "NISE Gwal Pahari, Gurugram - IMD-3379586",
+   "lat": 28.422681,
+   "lon": 77.148944,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 11603,
+   "sensorId": 12236361,
+   "name": "Chandni Chowk, Delhi - IITM-3379665",
+   "lat": 28.656756,
+   "lon": 77.227234,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  },
+  {
+   "id": 11607,
+   "sensorId": 12236376,
+   "name": "Lodhi Road, Delhi - IITM-3379667",
+   "lat": 28.588333,
+   "lon": 77.221667,
+   "units": "µg/m³",
+   "daysByMonth": {
+    "2025-11": 30
+   }
+  }
+ ],
+ "focus": "India only (Punjab, Haryana, Delhi, Rajasthan, UP, Chandigarh); Pakistani stations removed 2026-10-07"
+}

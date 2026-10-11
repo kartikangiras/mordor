@@ -1,0 +1,16 @@
+[
+  {
+    "id": "osm-node-EXAMPLE",
+    "name": "Govt Boys Senior Secondary School, Rohini Sec 3",
+    "name_hi": "राजकीय बाल वरिष्ठ माध्यमिक विद्यालय, रोहिणी सेक्टर 3",
+    "lat": 28.7100, "lon": 77.1100,
+    "principal": "Name as they want it on the card",
+    "phone": "+91XXXXXXXXXX",
+    "email": "school@example.org",
+    "hours": ["08:00", "14:00"],
+    "dismissal": ["15:00", "16:00"],
+    "hasPurifiers": false,
+    "students": 1200,
+    "onboardedAt": "2026-10-09T05:00:00Z"
+  }
+]
