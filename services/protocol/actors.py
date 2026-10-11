@@ -137,7 +137,7 @@ ROLES = {
 
 # Fictional demo personas (as Hestia's Raj / Maria / Jennifer / Carlos). Not real people.
 PERSONAS = [
-    {"name": "Priya", "role": "analyst", "title": "Forecast analyst", "org": "mordor", "entityId": None, "email": "priya.demo@example.com"},
+    {"name": "Priya", "role": "analyst", "title": "Forecast analyst", "org": "Mordor", "entityId": None, "email": "priya.demo@example.com"},
     {"name": "Anita", "role": "operator", "title": "Principal", "org": "Kendriya Vidyalaya, Rohini", "entityId": "osm-way-388242027", "email": "anita.demo@example.com"},
     {"name": "Rekha", "role": "operator", "title": "RWA secretary", "org": "Rohini Sector 3 RWA (demo)", "entityId": "rwa-demo-rohini", "email": "rekha.demo@example.com"},
     {"name": "Gurpreet", "role": "operator", "title": "District agriculture officer", "org": "Sangrur (demo)", "entityId": "dao-demo-sangrur", "email": "gurpreet.demo@example.com"},

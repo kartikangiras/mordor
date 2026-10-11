@@ -5,7 +5,7 @@ import type { LayerId } from '@/config/layers'
 export interface Persona { name: string; title: string; org: string; role: 'analyst' | 'operator' | 'verifier' | 'auditor'; entityId: string | null; colour: string; email: string | null }
 
 export const PERSONAS: Record<string, Persona> = {
-  Priya: { name: 'Priya', title: 'Forecast analyst', org: 'mordor', role: 'analyst', entityId: null, colour: '#818CF8', email: 'priya.demo@example.com' },
+  Priya: { name: 'Priya', title: 'Forecast analyst', org: 'Mordor', role: 'analyst', entityId: null, colour: '#818CF8', email: 'priya.demo@example.com' },
   Anita: { name: 'Anita', title: 'Principal', org: 'Kendriya Vidyalaya, Rohini', role: 'operator', entityId: 'osm-way-388242027', colour: '#FB923C', email: 'anita.demo@example.com' },
   'Dr. Mehta': { name: 'Dr. Mehta', title: 'Air-quality officer', org: 'Delhi Pollution Control Committee', role: 'verifier', entityId: null, colour: '#10B981', email: 'mehta.demo@example.com' },
   Gurpreet: { name: 'Gurpreet', title: 'District agriculture officer', org: 'Sangrur', role: 'operator', entityId: 'dao-demo-sangrur', colour: '#F59E0B', email: 'gurpreet.demo@example.com' },
