@@ -1,0 +1,46 @@
+{
+  "Comment": "mordor forecast-run: prepare -> advect -> render -> sample -> publish (DESIGN.md 5.9). runs/latest.json is written only by publish, so a failure anywhere leaves the last good run in place.",
+  "StartAt": "prepare",
+  "States": {
+    "prepare": {
+      "Type": "Task",
+      "Resource": "${PrepareArn}",
+      "Retry": [{ "ErrorEquals": ["States.ALL"], "IntervalSeconds": 60, "MaxAttempts": 2, "BackoffRate": 2.0 }],
+      "Catch": [{ "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "failed" }],
+      "Next": "advect"
+    },
+    "advect": {
+      "Type": "Task",
+      "Resource": "${AdvectArn}",
+      "TimeoutSeconds": 320,
+      "Retry": [{ "ErrorEquals": ["Lambda.ServiceException", "Lambda.TooManyRequestsException"], "IntervalSeconds": 30, "MaxAttempts": 1 }],
+      "Catch": [{ "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "failed" }],
+      "Next": "render"
+    },
+    "render": {
+      "Type": "Task",
+      "Resource": "${RenderArn}",
+      "TimeoutSeconds": 200,
+      "Catch": [{ "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "failed" }],
+      "Next": "sample"
+    },
+    "sample": {
+      "Type": "Task",
+      "Resource": "${SampleArn}",
+      "TimeoutSeconds": 200,
+      "Catch": [{ "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "failed" }],
+      "Next": "publish"
+    },
+    "publish": {
+      "Type": "Task",
+      "Resource": "${PublishArn}",
+      "Retry": [{ "ErrorEquals": ["States.ALL"], "IntervalSeconds": 20, "MaxAttempts": 2, "BackoffRate": 2.0 }],
+      "End": true
+    },
+    "failed": {
+      "Type": "Fail",
+      "Error": "ForecastRunFailed",
+      "Cause": "A step failed; runs/latest.json still points at the last good run."
+    }
+  }
+}

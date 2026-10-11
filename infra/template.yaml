@@ -1,0 +1,616 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  mordor - a 5 km, hourly, 48-hour forecast of the stubble-fire PM2.5 increment over
+  Punjab/Haryana/NCR, delivered as a decision to school principals. Built with SAM CLI.
+
+Parameters:
+  AppName:
+    Type: String
+    Default: mordor
+    Description: Short name used for resource naming and the SSM prefix (/AppName/).
+  DemoAuth:
+    Type: String
+    Default: "0"
+    AllowedValues: ["0", "1"]
+    Description: Set to 1 to let the API accept the demo personas' X-Dev-* headers (DEV_AUTH_BYPASS) so the walkthrough can write records without Cognito. Demo stacks only; prod stays 0.
+  Stage:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, prod]
+  BudgetEmail:
+    Type: String
+    Default: ''
+    Description: Optional. If set, a USD 20 monthly cost budget alarm emails this address.
+
+Conditions:
+  HasBudgetEmail: !Not [!Equals [!Ref BudgetEmail, '']]
+
+Globals:
+  Function:
+    Architectures: [arm64]
+    Timeout: 60
+    MemorySize: 512
+    Tracing: Active
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref MainTable
+        DATA_BUCKET: !Ref DataBucket
+        SSM_PREFIX: !Sub /${AppName}/
+        STAGE: !Ref Stage
+        LOG_LEVEL: INFO
+
+Resources:
+  # ------------------------------------------------------------------ storage
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AppName}-data-${AWS::AccountId}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: expire-raw
+            Status: Enabled
+            Prefix: raw/
+            ExpirationInDays: 45
+          - Id: expire-runs
+            Status: Enabled
+            Prefix: runs/
+            ExpirationInDays: 30
+
+  WebBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AppName}-web-${AWS::AccountId}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # CloudFront may read runs/*, static/*, validation/* from the data bucket; the bucket itself stays private.
+  DataBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref DataBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: { Service: cloudfront.amazonaws.com }
+            Action: s3:GetObject
+            Resource:
+              - !Sub ${DataBucket.Arn}/runs/*
+              - !Sub ${DataBucket.Arn}/static/*
+              - !Sub ${DataBucket.Arn}/validation/*
+              - !Sub ${DataBucket.Arn}/records/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${Cdn}
+
+  WebBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: { Service: cloudfront.amazonaws.com }
+            Action: s3:GetObject
+            Resource: !Sub ${WebBucket.Arn}/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${Cdn}
+
+  MainTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AppName}-main-${Stage}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: PK, AttributeType: S }
+        - { AttributeName: SK, AttributeType: S }
+        - { AttributeName: GSI1PK, AttributeType: S }
+        - { AttributeName: GSI1SK, AttributeType: S }
+      KeySchema:
+        - { AttributeName: PK, KeyType: HASH }
+        - { AttributeName: SK, KeyType: RANGE }
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - { AttributeName: GSI1PK, KeyType: HASH }
+            - { AttributeName: GSI1SK, KeyType: RANGE }
+          Projection: { ProjectionType: ALL }
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  # ------------------------------------------------------------------ CDN
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub ${AppName}-${Stage}-oac
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # Single-page app: any path without a file extension is served index.html.
+  SpaRewriteFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub ${AppName}-${Stage}-spa-rewrite
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Rewrite extension-less paths to /index.html for the React router
+        Runtime: cloudfront-js-2.0
+      FunctionCode: |
+        function handler(event) {
+          var req = event.request;
+          var uri = req.uri;
+          if (!uri.includes('.') ) { req.uri = '/index.html'; }
+          return req;
+        }
+
+  Cdn:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub ${AppName} ${Stage}
+        HttpVersion: http2and3
+        PriceClass: PriceClass_200
+        DefaultRootObject: index.html
+        Origins:
+          - Id: web
+            DomainName: !GetAtt WebBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
+            S3OriginConfig: { OriginAccessIdentity: '' }
+          - Id: data
+            DomainName: !GetAtt DataBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
+            S3OriginConfig: { OriginAccessIdentity: '' }
+          - Id: api
+            DomainName: !Sub ${HttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+        DefaultCacheBehavior:
+          TargetOriginId: web
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6   # Managed-CachingOptimized
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt SpaRewriteFunction.FunctionMetadata.FunctionARN
+        CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: api
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, PATCH, POST, DELETE]
+            Compress: true
+            # Managed-CachingDisabled. Not UseOriginCacheControlHeaders-*: those whitelist
+            # `host` in the cache key, and cache-key headers are forwarded to the origin, so
+            # API Gateway would see the CloudFront host and answer 403 ForbiddenException.
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad        # Managed-CachingDisabled
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac # Managed-AllViewerExceptHostHeader
+          - PathPattern: /runs/*
+            TargetOriginId: data
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          - PathPattern: /static/*
+            TargetOriginId: data
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          - PathPattern: /validation/*
+            TargetOriginId: data
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          - PathPattern: /records/*
+            TargetOriginId: data
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+
+  # ------------------------------------------------------------------ API
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: $default
+      Auth:
+        Authorizers:
+          CognitoJwt:
+            IdentitySource: $request.header.Authorization
+            JwtConfiguration:
+              issuer: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}
+              audience:
+                - !Ref UserPoolClient
+
+  # ------------------------------------------------------------------ principals (§10.1)
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub ${AppName}-${Stage}-principals
+      UsernameAttributes: [email]
+      AutoVerifiedAttributes: [email]
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true   # principals are onboarded by us, never self-signup
+      Policies:
+        PasswordPolicy: { MinimumLength: 10, RequireLowercase: true, RequireNumbers: true, RequireSymbols: false, RequireUppercase: false }
+      Schema:
+        - Name: school_id
+          AttributeDataType: String
+          Mutable: true
+          StringAttributeConstraints: { MinLength: '1', MaxLength: '64' }
+        - Name: role
+          AttributeDataType: String
+          Mutable: true
+          StringAttributeConstraints: { MinLength: '1', MaxLength: '16' }
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: web
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      ExplicitAuthFlows: [ALLOW_USER_SRP_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_REFRESH_TOKEN_AUTH]
+      PreventUserExistenceErrors: ENABLED
+      ReadAttributes: [email, custom:school_id, custom:role]
+
+  ApiFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-api
+      Runtime: python3.12
+      CodeUri: ../services/
+      Handler: api.handler.handler
+      MemorySize: 1024
+      Timeout: 30
+      Environment:
+        Variables:
+          NOTIFY_FUNCTION: !Ref NotifyFn
+          DEV_AUTH_BYPASS: !Ref DemoAuth   # "1" only on a demo stack (parameter DemoAuth)
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+        - SSMParameterReadPolicy: { ParameterName: !Sub "${AppName}/*" }
+        - LambdaInvokePolicy: { FunctionName: !Ref NotifyFn }
+        - SESCrudPolicy: { IdentityName: '*' }
+      Events:
+        Proxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/{proxy+}
+            Method: ANY
+        Me:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/me
+            Method: GET
+            Auth: { Authorizer: CognitoJwt }
+        MeSub:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/me/{proxy+}
+            Method: ANY
+            Auth: { Authorizer: CognitoJwt }
+        Ack:   # alias kept for older cards; the SPA posts to /api/actors/{id}/ack
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/schools/{id}/ack
+            Method: POST
+            Auth: { Authorizer: CognitoJwt }
+        # Every write the SPA performs (PIVOT_PLAN.md §6, option A). Without these the catch-all
+        # above served them with no authorizer, so principal() saw empty claims and a real
+        # Cognito user got 401 on every action. /api/records and /api/records/{entity} stay public.
+        Actors:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/actors/{proxy+}
+            Method: ANY
+            Auth: { Authorizer: CognitoJwt }
+        Verifier:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/verifier/{proxy+}
+            Method: ANY
+            Auth: { Authorizer: CognitoJwt }
+        Account:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/records/account
+            Method: POST
+            Auth: { Authorizer: CognitoJwt }
+
+  # ------------------------------------------------------------------ parent message (§6.4)
+  NotifyFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-notify
+      Runtime: python3.12
+      CodeUri: ../services/
+      Handler: notify.handler.handler
+      MemorySize: 1024
+      Timeout: 60
+      Environment:
+        Variables:
+          # Provider is chosen at cold start (services/notify/agent.py): the Anthropic API when
+          # the SSM SecureString /mordor/anthropic_api_key exists (the deployed path; the key is
+          # never an env var), else Bedrock on NOTIFY_MODEL_ID. Anthropic models on Bedrock are
+          # closed to this account (AWS_INTEGRATION.md §5.1), hence the direct API. Any failure
+          # still falls back to the Jinja templates and the card reads `source: template`.
+          NOTIFY_PROVIDER: auto
+          NOTIFY_ANTHROPIC_MODEL: claude-haiku-4-5-20251001   # ~4 s and within 400 chars; claude-sonnet-5 measured slower or over length
+          NOTIFY_MODEL_ID: us.amazon.nova-lite-v1:0
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - SSMParameterReadPolicy: { ParameterName: !Sub "${AppName}/*" }
+        - Statement:
+            - Effect: Allow
+              Action: [bedrock:InvokeModel, bedrock:InvokeModelWithResponseStream, bedrock:Converse, bedrock:ConverseStream]
+              Resource:
+                - arn:aws:bedrock:*::foundation-model/*
+                - !Sub arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/*
+
+  # ------------------------------------------------------------------ ingest (M1)
+  IngestFirmsFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-ingest-firms
+      Runtime: python3.12
+      CodeUri: ../services/
+      Handler: ingest_firms.handler.handler
+      Timeout: 60
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+        - SSMParameterReadPolicy: { ParameterName: !Sub "${AppName}/*" }
+      Events:
+        Every3h:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(0 0/3 * * ? *)
+            Description: FIRMS VIIRS NRT fires for the domain
+
+  IngestWeatherFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-ingest-weather
+      Runtime: python3.12
+      CodeUri: ../services/
+      Handler: ingest_weather.handler.handler
+      Timeout: 120
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+      Events:
+        Every3h:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(0 0/3 * * ? *)
+            Description: Open-Meteo 925 hPa winds, BLH and CAMS PM2.5 background
+
+  IngestCpcbFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-ingest-cpcb
+      Runtime: python3.12
+      CodeUri: ../services/
+      Handler: ingest_cpcb.handler.handler
+      # OpenAQ v3 has no bulk latest-by-bbox, so this paces one call per fresh station
+      # (openaq_live.py) at 45 req/min and may park a full window on a 429 retry; 150
+      # stations plus two such pauses is ~5 min.
+      Timeout: 600
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+        - SSMParameterReadPolicy: { ParameterName: !Sub "${AppName}/*" }
+      Events:
+        Hourly:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: rate(1 hour)
+            Description: Station PM2.5 via OpenAQ v3 (+ data.gov.in when it answers)
+
+  # ------------------------------------------------------------------ forecast run (M4, §5.9)
+  # One container image (numpy + Pillow), five functions differing only in the command.
+  ForecastPrepareFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-forecast-prepare
+      PackageType: Image
+      ImageConfig: { Command: [forecast.steps.prepare_handler] }
+      MemorySize: 1024
+      Timeout: 120
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+    Metadata:
+      Dockerfile: forecast/Dockerfile
+      DockerContext: ../services
+      DockerTag: forecast
+
+  ForecastAdvectFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-forecast-advect
+      PackageType: Image
+      ImageConfig: { Command: [forecast.steps.advect_handler] }
+      MemorySize: 3008
+      Timeout: 300
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+    Metadata:
+      Dockerfile: forecast/Dockerfile
+      DockerContext: ../services
+      DockerTag: forecast
+
+  ForecastRenderFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-forecast-render
+      PackageType: Image
+      ImageConfig: { Command: [forecast.steps.render_handler] }
+      MemorySize: 2048
+      Timeout: 180
+      Policies:
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+    Metadata:
+      Dockerfile: forecast/Dockerfile
+      DockerContext: ../services
+      DockerTag: forecast
+
+  ForecastSampleFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-forecast-sample
+      PackageType: Image
+      ImageConfig: { Command: [forecast.steps.sample_handler] }
+      MemorySize: 1024
+      Timeout: 120
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+    Metadata:
+      Dockerfile: forecast/Dockerfile
+      DockerContext: ../services
+      DockerTag: forecast
+
+  ForecastPublishFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-forecast-publish
+      PackageType: Image
+      ImageConfig: { Command: [forecast.steps.publish_handler] }
+      MemorySize: 512
+      Timeout: 60
+      Environment:
+        Variables:
+          CDN_DISTRIBUTION_ID: !Ref Cdn
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+        - Statement:
+            - Effect: Allow
+              Action: cloudfront:CreateInvalidation
+              Resource: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${Cdn}
+    Metadata:
+      Dockerfile: forecast/Dockerfile
+      DockerContext: ../services
+      DockerTag: forecast
+
+  ForecastSfn:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: !Sub ${AppName}-${Stage}-forecast-run
+      Type: STANDARD
+      DefinitionUri: statemachine/forecast-run.asl.json
+      DefinitionSubstitutions:
+        PrepareArn: !GetAtt ForecastPrepareFn.Arn
+        AdvectArn: !GetAtt ForecastAdvectFn.Arn
+        RenderArn: !GetAtt ForecastRenderFn.Arn
+        SampleArn: !GetAtt ForecastSampleFn.Arn
+        PublishArn: !GetAtt ForecastPublishFn.Arn
+      Policies:
+        - LambdaInvokePolicy: { FunctionName: !Ref ForecastPrepareFn }
+        - LambdaInvokePolicy: { FunctionName: !Ref ForecastAdvectFn }
+        - LambdaInvokePolicy: { FunctionName: !Ref ForecastRenderFn }
+        - LambdaInvokePolicy: { FunctionName: !Ref ForecastSampleFn }
+        - LambdaInvokePolicy: { FunctionName: !Ref ForecastPublishFn }
+      Events:
+        Every3hPlus10:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(10 0/3 * * ? *)
+            Description: 48 h forecast, 10 min after the ingests
+            Input: '{"hours": 48}'
+
+  # ------------------------------------------------------------------ decision records (§13.5)
+  RecordsDailyFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AppName}-${Stage}-records-daily
+      Runtime: python3.12
+      CodeUri: ../services/
+      Handler: records.daily.handler
+      MemorySize: 1024
+      Timeout: 300
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref MainTable }
+        - S3CrudPolicy: { BucketName: !Ref DataBucket }
+      Events:
+        Nightly:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(30 21 * * ? *)   # 03:00 IST: check yesterday's outcomes, write impact statements
+            Description: decision records - outcome checks against stations, impact statements
+
+  # ------------------------------------------------------------------ cost guard (§10.4)
+  CostBudget:
+    Type: AWS::Budgets::Budget
+    Condition: HasBudgetEmail
+    Properties:
+      Budget:
+        BudgetName: !Sub ${AppName}-${Stage}-monthly
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit: { Amount: 20, Unit: USD }
+        CostTypes:                 # gross usage: alarm even while the USD 100 credit is absorbing the bill
+          IncludeCredit: false
+          IncludeRefund: false
+          IncludeDiscount: true
+          IncludeSubscription: true
+          IncludeTax: true
+          IncludeSupport: true
+          IncludeOtherSubscription: true
+          IncludeUpfront: true
+          IncludeRecurring: true
+          UseBlended: false
+      NotificationsWithSubscribers:
+        - Notification: { NotificationType: ACTUAL, ComparisonOperator: GREATER_THAN, Threshold: 50, ThresholdType: PERCENTAGE }
+          Subscribers: [{ SubscriptionType: EMAIL, Address: !Ref BudgetEmail }]
+        - Notification: { NotificationType: ACTUAL, ComparisonOperator: GREATER_THAN, Threshold: 80, ThresholdType: PERCENTAGE }
+          Subscribers: [{ SubscriptionType: EMAIL, Address: !Ref BudgetEmail }]
+        - Notification: { NotificationType: FORECASTED, ComparisonOperator: GREATER_THAN, Threshold: 100, ThresholdType: PERCENTAGE }
+          Subscribers: [{ SubscriptionType: EMAIL, Address: !Ref BudgetEmail }]
+
+Outputs:
+  CdnDomain:
+    Description: Public base URL (web app, /api/*, /runs/*, /static/*)
+    Value: !Sub https://${Cdn.DomainName}
+  CdnDistributionId:
+    Value: !Ref Cdn
+  ApiEndpoint:
+    Description: Direct API Gateway URL (bypasses CloudFront)
+    Value: !Sub https://${HttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}
+  DataBucketName:
+    Value: !Ref DataBucket
+  WebBucketName:
+    Value: !Ref WebBucket
+  TableName:
+    Value: !Ref MainTable
+  ForecastStateMachineArn:
+    Value: !Ref ForecastSfn
+  UserPoolId:
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
