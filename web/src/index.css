@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+@theme {
+  --color-ink: #0b0d10;
+  --color-ink-2: #11151a;
+  --color-panel: #14181d;
+  --color-line: #262c34;
+  --color-fg: #e8ebef;
+  --color-mute: #8b95a3;
+  --color-fire: #ffb347;
+  --color-ember: #ff6b35;
+  --font-sans: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+:root { --header-h: 56px; }
+html, body, #root { height: 100%; margin: 0; background: var(--color-ink); color: var(--color-fg); }
+body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+
+/* One surface for every floating panel: frosted ink, a hairline, a soft drop. */
+.glass {
+  background: rgba(17, 21, 26, 0.74);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+}
+.glass-tight { border-radius: 12px; }
+.hairline { border: 1px solid rgba(255, 255, 255, 0.08); }
+
+/* the landing's cinematic mode: no zoom/compass control, no pointer interaction with the basemap */
+.map-cinematic .maplibregl-ctrl-top-right { display: none; }
+.map-cinematic .maplibregl-canvas { cursor: default; }
+/* on the landing the credit collapses to its (i) button; hover or focus opens it */
+.map-cinematic .maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-inner { display: none; }
+.map-cinematic .maplibregl-ctrl-attrib.maplibregl-compact:hover .maplibregl-ctrl-attrib-inner,
+.map-cinematic .maplibregl-ctrl-attrib.maplibregl-compact:focus-within .maplibregl-ctrl-attrib-inner { display: block; }
+.maplibregl-ctrl-attrib { font-size: 10px; background: rgba(11,13,16,.7) !important; color: #8b95a3; }
+.maplibregl-ctrl-attrib a { color: #b8c0cb; }
+.maplibregl-ctrl-group { background: rgba(17,21,26,.74) !important; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 10px 30px -12px rgba(0,0,0,.7) !important; border-radius: 10px !important; overflow: hidden; }
+.maplibregl-ctrl-group button + button { border-top: 1px solid rgba(255,255,255,.08) !important; }
+.maplibregl-ctrl button .maplibregl-ctrl-icon { filter: invert(0.85); }
+.maplibregl-popup-content { background: transparent !important; padding: 0 !important; box-shadow: none !important; }
+.maplibregl-popup-tip { border-top-color: #14181d !important; border-bottom-color: #14181d !important; }
+
+/* the forecast-hour slider: a thin track, elapsed part in fire, a ringed thumb */
+.vd-range { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; margin: 0; background: transparent; cursor: pointer; }
+.vd-range:disabled { cursor: default; opacity: .5; }
+.vd-range::-webkit-slider-runnable-track { height: 4px; border-radius: 999px; background: linear-gradient(90deg, var(--color-fire) var(--p, 0%), rgba(255,255,255,.14) var(--p, 0%)); }
+.vd-range::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 999px; background: #fff; border: 3px solid var(--color-fire); box-shadow: 0 2px 10px rgba(0,0,0,.55); }
+.vd-range::-moz-range-track { height: 4px; border-radius: 999px; background: rgba(255,255,255,.14); }
+.vd-range::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--color-fire); }
+.vd-range::-moz-range-thumb { width: 12px; height: 12px; border-radius: 999px; background: #fff; border: 3px solid var(--color-fire); box-shadow: 0 2px 10px rgba(0,0,0,.55); }
+.vd-range:focus-visible { outline: 2px solid var(--color-fire); outline-offset: 4px; border-radius: 999px; }
+
+/* landing */
+@keyframes vd-breathe { 0%, 100% { opacity: .5; transform: translate(-50%, -50%) scale(1); } 50% { opacity: .8; transform: translate(-50%, -50%) scale(1.08); } }
+.hero-glow { position: absolute; left: 50%; top: 46%; width: min(70vw, 900px); height: min(50vh, 520px); border-radius: 999px; pointer-events: none; animation: vd-breathe 9s ease-in-out infinite;
+  background: radial-gradient(closest-side, rgba(255,179,71,.18), rgba(255,107,53,.08) 45%, rgba(0,0,0,0) 72%); filter: blur(10px); }
+/* each scroll stop reveals its card once it is on screen */
+.reveal .card { opacity: 0; transform: translateY(28px); transition: opacity .8s ease-out, transform .8s ease-out; }
+.reveal.in .card { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal .card { transition: none; opacity: 1; transform: none; } .hero-glow { animation: none; } }
+/* the story's closing call: a soft ring that breathes */
+@keyframes vd-ring { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,179,71,.35); } 50% { box-shadow: 0 0 0 10px rgba(255,179,71,0); } }
+.pulse-ring { animation: vd-ring 2.4s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) { .pulse-ring { animation: none; } }
