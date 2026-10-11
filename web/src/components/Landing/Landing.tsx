@@ -29,7 +29,7 @@ const SLIDES: Slide[] = [
     stat: (m) => (m ? `${m.hours.length - 1} h` : '—'), cap: 'ahead, every hour, 5 km cells', cta: 'Walk the chapters', to: '/story' },
   { n: '03', kicker: 'Who is underneath it', title: 'The Schools', colour: '#10b981',
     body: 'The forecast is read at every school in the domain, through school hours and dismissal, and turned into a tier a principal can act on: normal, caution, indoors, restrict, closure advisory.',
-    stat: (m) => fmt(m?.schools?.named), cap: 'schools on the map, from OpenStreetMap', cta: 'See the exposure zones', to: '/zones' },
+    stat: (m) => fmt(m?.schools?.named), cap: 'schools on the map', cta: 'See the exposure zones', to: '/zones' },
   { n: '04', kicker: 'The next morning', title: 'The Check', colour: '#818cf8',
     body: 'Every run is scored against the monitors the next day. The fit, its errors and its interval sit on the validation page and in the footer of every card, bad days included.',
     stat: (m) => fmt(m?.calibration.stations), cap: 'stations in the hindcast', cta: 'Read the validation', to: '/validation' },
@@ -69,25 +69,21 @@ export default function Landing({ error }: { error: string | null }) {
         <section data-stop={0} className="reveal in relative flex min-h-full snap-start flex-col items-center justify-center px-6 pb-16 pt-5 text-center">
           <div className="hero-glow" />
           <img src="/brand/mark-512.png" alt="" width={96} height={96} className="relative h-24 w-24 max-sm:h-20 max-sm:w-20" style={{ filter: 'drop-shadow(0 0 28px rgba(255,107,53,0.35))' }} />
-          <div className="relative mt-3 font-mono text-[11px] uppercase tracking-[0.3em] text-fire">■ mordor · धुआँ · Punjab → Delhi, October</div>
+          <div className="relative mt-3 font-mono text-[11px] tracking-[0.3em] text-fire">■ Mordor · धुआँ · India · monitored every 3 hours</div>
           <h1 className="relative mt-5 text-fg" style={{ fontSize: 'clamp(2.6rem, 8vw, 6.5rem)', fontWeight: 300, letterSpacing: '-0.045em', lineHeight: 0.95 }}>
             Tomorrow's smoke,<br /><em className="font-display italic text-fire">as a decision.</em>
           </h1>
-          <p className="relative mt-5 max-w-xl text-[15px] leading-relaxed text-fg/65">Tonight's stubble smoke, hour by hour, for the next two days.</p>
+          <p className="relative mt-5 max-w-xl text-[17px] leading-relaxed text-fg/80">What is in tomorrow's air, and why?</p>
+          <p className="relative mt-1 max-w-xl text-[13px] leading-relaxed text-fg/55">Tonight's stubble smoke, hour by hour, for the next two days.</p>
           {worst && worstTier && (
             <div className="relative mt-3 flex flex-wrap items-center justify-center gap-x-2 font-mono text-[11px] uppercase tracking-[0.18em] text-fg/70">
               <span className="inline-block h-2 w-2 rounded-full" style={{ background: TIERS[worstTier].colour }} />
               <span>worst in 48 h · {worst.name} · {TIERS[worstTier].label}{worst.peak?.t ? ` · ${istLabel(worst.peak.t)}` : ''}</span>
             </div>
           )}
-          <div className="relative mt-7 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/story/1" className="flex h-12 items-center gap-3 rounded-full px-7 font-mono text-[12px] uppercase tracking-[0.18em] text-fg transition hover:scale-[1.04]" style={{ background: 'rgba(255,255,255,0.06)', border: '1.5px solid rgba(255,255,255,0.28)', backdropFilter: 'blur(10px)' }}>
-              Explore the story <span className="h-2 w-2 rounded-full bg-fire" />
-            </Link>
-            <Link to={demoMode ? '/act/walk' : '/act'} className="flex h-12 items-center gap-3 rounded-full px-7 font-mono text-[12px] uppercase tracking-[0.18em] text-fg transition hover:scale-[1.04]" style={{ background: 'rgba(255,179,71,0.16)', border: '1.5px solid rgba(255,179,71,0.55)', backdropFilter: 'blur(10px)' }}>
-              Action plan <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#d7263d]" />
-            </Link>
-          </div>
+          <Link to="/story/1" className="relative mt-7 flex h-12 items-center gap-3 rounded-full px-8 font-mono text-[12px] uppercase tracking-[0.18em] text-fg transition hover:scale-[1.04]" style={{ background: 'rgba(255,179,71,0.16)', border: '1.5px solid rgba(255,179,71,0.55)', backdropFilter: 'blur(10px)' }}>
+            Explore the story <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#d7263d]" />
+          </Link>
           {error && <div className="relative mt-4 font-mono text-xs text-red-300">No run available: {error}</div>}
           <div className="relative mt-8 font-mono text-[10px] uppercase tracking-[0.3em] text-mute">■ Powered by</div>
           <div className="relative mt-4 flex items-center justify-center gap-12 text-fg/85 max-sm:gap-8">
@@ -138,7 +134,7 @@ export default function Landing({ error }: { error: string | null }) {
               <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#d7263d]" />
             </Link>
             <div className="mx-auto mt-14 max-w-2xl font-mono text-[10px] leading-relaxed text-mute/80">
-              Built on AWS. Data: NASA FIRMS, Copernicus CAMS, Open-Meteo, OpenAQ, © OpenStreetMap contributors. A hackathon project, not affiliated with or endorsed by NASA, Amazon or AWS. Not for medical decisions.
+              Fires NASA FIRMS · background Copernicus CAMS · winds Open-Meteo · stations OpenAQ. Not for medical decisions.
             </div>
           </div>
         </section>
