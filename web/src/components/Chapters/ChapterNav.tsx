@@ -101,6 +101,17 @@ export default function ChapterNav({ mode = 'story', lastLabel, onLast }: { mode
         <div className="mb-3 flex gap-1" aria-hidden>{chapters.slice(first, end + 1).map((c, i) => <span key={c.id} className={`h-1 flex-1 rounded-full ${first + i <= chapter ? 'bg-fire' : 'bg-white/10'}`} />)}</div>
         <ChapterCopy index={chapter} n={chapter - first + 1} total={end - first + 1} kicker={mode === 'story' ? 'chapter' : 'before you begin'} />
         {stat(ch.id) && <div className="mt-2 font-mono text-[11px] text-fire">{stat(ch.id)}</div>}
+        {last && mode === 'story' && (
+          <div className="pulse-ring mt-3 rounded-xl border border-fire/50 bg-fire/10 p-3" data-story-end>
+            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-fire">the story ends here</div>
+            <div className="mt-1 text-[15px] font-semibold leading-tight text-fg">Be a responsible citizen. Do your part.</div>
+            <div className="mt-1 text-[12px] leading-relaxed text-mute">Principals, residents' associations, district offices and hospitals each hold a card and a decision. Walk the eight steps and leave a record — or go and see the changes around you yourself.</div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Link to={demoMode ? '/act/walk' : '/act'} className="flex h-11 items-center justify-center gap-2 rounded-lg bg-fire text-[13px] font-semibold text-ink hover:bg-[#ffc46a]">Action plan <span className="h-2 w-2 animate-pulse rounded-full bg-[#d7263d]" /></Link>
+              <Link to="/map" className="hairline flex h-11 items-center justify-center rounded-lg text-[13px] font-medium text-fg hover:bg-white/5">Explore the map</Link>
+            </div>
+          </div>
+        )}
         <div className="mt-3 flex flex-wrap items-center gap-1.5" aria-label="Layers in this chapter">
           {ch.layers.map((id) => <span key={id} className="hairline inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 font-mono text-[10px] uppercase tracking-wider text-fg/80"><LayerIcon id={id} className="h-3 w-3 text-fire" />{LAYER_WORDS[id]}</span>)}
           <button type="button" onClick={() => setKeyOpen((o) => !o)} aria-expanded={keyOpen} className="h-7 rounded-full px-2 font-mono text-[10px] uppercase tracking-wider text-mute hover:text-fg">{keyOpen ? 'key ▴' : 'key ▾'}</button>
@@ -108,17 +119,9 @@ export default function ChapterNav({ mode = 'story', lastLabel, onLast }: { mode
         {keyOpen && <div className="mt-2 max-h-56 overflow-y-auto rounded-lg bg-black/25 p-2"><Legend inline /></div>}
         <div className="mt-4 flex items-center gap-2">
           <button type="button" onClick={() => go(chapter - 1)} disabled={chapter === first} className="hairline h-10 rounded-lg px-3 text-[12px] font-medium text-fg hover:bg-white/5 disabled:opacity-40">← prev</button>
-          <button type="button" onClick={() => (last ? finish() : go(chapter + 1))} className={`h-10 flex-1 rounded-lg px-3 text-[12px] font-semibold ${last && mode === 'story' ? 'hairline text-fg hover:bg-white/5' : 'bg-fire text-ink hover:bg-[#ffc46a]'}`}>{last ? (lastLabel ?? 'Open the map') : 'next →'}</button>
+          {!(last && mode === 'story') && <button type="button" onClick={() => (last ? finish() : go(chapter + 1))} className="h-10 flex-1 rounded-lg bg-fire px-3 text-[12px] font-semibold text-ink hover:bg-[#ffc46a]">{last ? (lastLabel ?? 'Open the map') : 'next →'}</button>}
           <button type="button" onClick={exit} className="hairline flex h-10 w-10 items-center justify-center rounded-lg text-mute hover:bg-white/5 hover:text-fg" title="Escape" aria-label={mode === 'story' ? 'Leave the story' : 'Back to the door'}><CloseIcon /></button>
         </div>
-        {last && mode === 'story' && (
-          <div className="pulse-ring mt-3 rounded-xl border border-fire/50 bg-fire/10 p-3" data-story-end>
-            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-fire">the story ends here</div>
-            <div className="mt-1 text-[15px] font-semibold leading-tight text-fg">Be a responsible citizen. Do your part.</div>
-            <div className="mt-1 text-[12px] leading-relaxed text-mute">Principals, residents' associations, district offices and hospitals each hold a card and a decision. Walk the eight steps and leave a record.</div>
-            <Link to={demoMode ? '/act/walk' : '/act'} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-lg bg-fire text-[13px] font-semibold text-ink hover:bg-[#ffc46a]">Start the action plan <span className="h-2 w-2 animate-pulse rounded-full bg-[#d7263d]" /></Link>
-          </div>
-        )}
         <div className="mt-3 font-mono text-[10px] text-mute max-sm:hidden">shift + arrows · chapters &nbsp; space · play</div>
       </div>
       {show && card && (
