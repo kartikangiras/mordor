@@ -1,0 +1,8 @@
+# Shared by every zip-packaged Lambda (CodeUri: services/). Container images install their own.
+requests>=2.32
+fastapi>=0.115
+mangum>=0.19
+numpy>=2.0
+pillow>=10
+jinja2>=3.1
+strands-agents[anthropic]>=1.0   # notify agent: Anthropic API provider (Bedrock needs only the base package)
