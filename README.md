@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="web/public/brand/logo-dark.png" />
-    <img src="web/public/brand/logo-light.png" width="420" alt="mordor" />
+    <img src="web/public/brand/logo-light.png" width="420" alt="Mordor" />
   </picture>
 </p>
 
@@ -34,7 +34,7 @@ delivered to the schools, residents' associations, district offices and hospital
 
 ---
 
-Every October the paddy stubble of Punjab burns and the smoke reaches Delhi a day later. mordor
+Every October the paddy stubble of Punjab burns and the smoke reaches Delhi a day later. Mordor
 forecasts that smoke — the fire increment on top of the regional background — on a 5 km grid,
 hour by hour, two days ahead, and turns it into something a principal, a colony secretary, a
 district officer or a hospital can act on by 6:30 the next morning. Every number on screen says
