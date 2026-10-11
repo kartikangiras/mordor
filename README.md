@@ -345,7 +345,7 @@ services/
   zones/         exposure zones, burn-risk cells, NDVI
 infra/           AWS SAM template
 web/             Vite · React · TypeScript · MapLibre · Tailwind
-tools/           hindcast, seeding, secrets, demo users
+tools/           hindcast, seeding, secrets, demo users, backdrops
 tests/           pytest
 data/            static inputs and the latest validation report
 ```
@@ -399,5 +399,6 @@ Released under the [MIT License](LICENSE).
 
 Fire detections courtesy of NASA FIRMS · background PM2.5 from Copernicus CAMS · winds from
 Open-Meteo · stations via OpenAQ · NDVI from NASA GIBS · schools and basemap data © OpenStreetMap
-contributors · map tiles by OpenFreeMap · imagery © Esri. Built on AWS with the Strands Agents SDK.
+contributors · map tiles by OpenFreeMap · imagery © Esri · page backdrops from NASA Worldview (GIBS), public
+domain. Built on AWS with the Strands Agents SDK.
 Not affiliated with or endorsed by NASA, Amazon or AWS.
