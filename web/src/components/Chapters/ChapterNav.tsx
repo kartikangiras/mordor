@@ -29,7 +29,19 @@ export default function ChapterNav({ mode = 'story', lastLabel, onLast }: { mode
   const [recordsEntity, setRecordsEntity] = useState<string | null>(null)
   const [keyOpen, setKeyOpen] = useState(true)   // the colour key is part of reading a chapter
   const schools = useStore((s) => s.schools)
+  const zones = useStore((s) => s.zones)
   const flyTo = useStore((s) => s.flyTo)
+  const stat = (id: string): string | null => {
+    if (!manifest) return null
+    switch (id) {
+      case 'burning': return `${manifest.fires.count.toLocaleString('en-IN')} detections in the last 24 h`
+      case 'arrival': return `${manifest.hours.length - 1} hours ahead · 5 km cells`
+      case 'zones': return zones ? `${zones.zones.length} cities ranked` : null
+      case 'underneath': return manifest.schools?.named ? `${manifest.schools.named.toLocaleString('en-IN')} schools on the map` : null
+      case 'lifecycle': return manifest.calibration.stations ? `${manifest.calibration.stations} stations in the hindcast` : null
+      default: return null
+    }
+  }
   const navigate = useNavigate()
   const go = useCallback((i: number) => {
     const j = Math.min(end, Math.max(first, i))
@@ -88,6 +100,7 @@ export default function ChapterNav({ mode = 'story', lastLabel, onLast }: { mode
       <div className="glass absolute left-4 top-4 max-h-[calc(100%-7rem)] w-[min(340px,calc(100%-2rem))] overflow-y-auto p-5 max-sm:left-2 max-sm:top-2 max-sm:w-[calc(100%-1rem)]">
         <div className="mb-3 flex gap-1" aria-hidden>{chapters.slice(first, end + 1).map((c, i) => <span key={c.id} className={`h-1 flex-1 rounded-full ${first + i <= chapter ? 'bg-fire' : 'bg-white/10'}`} />)}</div>
         <ChapterCopy index={chapter} n={chapter - first + 1} total={end - first + 1} kicker={mode === 'story' ? 'chapter' : 'before you begin'} />
+        {stat(ch.id) && <div className="mt-2 font-mono text-[11px] text-fire">{stat(ch.id)}</div>}
         <div className="mt-3 flex flex-wrap items-center gap-1.5" aria-label="Layers in this chapter">
           {ch.layers.map((id) => <span key={id} className="hairline inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 font-mono text-[10px] uppercase tracking-wider text-fg/80"><LayerIcon id={id} className="h-3 w-3 text-fire" />{LAYER_WORDS[id]}</span>)}
           <button type="button" onClick={() => setKeyOpen((o) => !o)} aria-expanded={keyOpen} className="h-7 rounded-full px-2 font-mono text-[10px] uppercase tracking-wider text-mute hover:text-fg">{keyOpen ? 'key ▴' : 'key ▾'}</button>
