@@ -126,10 +126,10 @@ def test_run_skips_cleanly_with_no_keys():
 
 def test_errors_never_publish_the_api_key():
     url = ("HTTPSConnectionPool(host='api.data.gov.in', port=443): Max retries exceeded with "
-           "url: /resource/a3e7afc6?api-key=TESTKEY0000000000000000000000000000000000000000000000000000"
+           "url: /resource/a3e7afc6?api-key=TESTKEY-not-a-real-key-redact-me-0000-0000-0000-0000"
            "&format=json&limit=1000 (Caused by NewConnectionError)")
     out = cpcb.redact(url)
-    assert "TESTKEY00000" not in out
+    assert "redact-me" not in out
     assert "api-key=***" in out
     assert "format=json" in out            # only the secret is masked
     assert cpcb.redact("X-API-Key header, key=abc123&z=1") == "X-API-Key header, key=***&z=1"
@@ -140,12 +140,12 @@ def test_run_redacts_the_key_in_the_public_snapshot(monkeypatch):
 
     def dead(api_key):
         raise requests.ConnectionError(
-            "url: /resource/a3e7afc6?api-key=TESTKEY0000000000000000000000000000000000000000000000000000")
+            "url: /resource/a3e7afc6?api-key=TESTKEY-not-a-real-key-redact-me-0000-0000-0000-0000")
 
     monkeypatch.setattr(cpcb, "fetch_rows", dead)
     monkeypatch.setattr(cpcb, "_from_openaq", lambda k, now: ([], {"ok": True}))
     out = cpcb.run(now=NOW, api_key="dg", openaq_key="oa")
-    assert "TESTKEY00000" not in str(out)
+    assert "redact-me" not in str(out)
 
 
 class _Resp:
