@@ -11,6 +11,12 @@ venv:
 
 test:
 	$(PY) -m pytest
+lint:              ## ruff over services, tools and tests (CI runs the same)
+	$(PY) -m ruff check services tools tests
+
+format:            ## ruff --fix for the safe fixes (imports, upgrades); review the diff
+	$(PY) -m ruff check services tools tests --fix
+
 
 ingest-firms:      ## fetch FIRMS into ./.data (no AWS needed)
 	$(PY) -m ingest_firms.handler
