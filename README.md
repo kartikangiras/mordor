@@ -106,37 +106,11 @@ PM2.5_total(x, t) = PM2.5_background(x, t)   CAMS via Open-Meteo, ~40 km — con
 
 We claim skill on the second term only, and say so.
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant SRC as NASA FIRMS · Open-Meteo · OpenAQ
-  participant ING as Ingest Lambdas
-  participant SFN as ForecastSfn
-  participant S3 as DataBucket and Cdn
-  actor PR as Principal
-  participant API as ApiFn
-  participant NOT as NotifyFn
-  participant NIGHT as RecordsDailyFn
-
-  SRC->>ING: tonight's fires, winds and CAMS background, every 3 h
-  ING->>S3: raw inputs
-  Note over SFN: 10 minutes later, prepare, advect, render, sample, publish
-  S3-->>SFN: fires, winds, background, the fitted constant k
-  SFN->>S3: 48 hours of overlays and grids
-  SFN->>S3: a card per school, association, office and hospital
-  SFN->>S3: runs/latest.json last, then invalidate
-  PR->>API: in the morning, open tomorrow's card
-  S3-->>API: the card from the latest run
-  API->>NOT: tier, hours of concern, actions
-  NOT-->>API: Hindi and English message, checked in code
-  API-->>PR: tier, hours, protocol, message, a 90 percent range
-  PR->>API: the actions taken
-  API->>S3: act record
-  Note over NIGHT: the next night, 03.00 IST
-  SRC->>NIGHT: station readings for the card's hours
-  NIGHT->>S3: verify record, confirmed, not confirmed, missed or pending
-  NIGHT->>S3: account record, impact credited only if confirmed
-```
+<p align="center">
+  <a href=".github/assets/flowchart.png">
+    <img src=".github/assets/flowchart.png" width="880" alt="Sequence: ingest every 3 h, the forecast run 10 minutes later, a principal opening tomorrow's card, and the nightly outcome check" />
+  </a>
+</p>
 
 The machinery:
 
@@ -153,8 +127,7 @@ The fire and weather ingests run every three hours and the forecast starts ten m
 them; the 00:10 UTC run is 05:40 IST, which is the card a principal reads at 6:30. The station
 ingest runs hourly and feeds the live station layer, not the forecast.
 
-<details>
-<summary><strong>Full AWS map</strong> — every resource and what talks to what</summary>
+<strong>Full AWS map</strong> — every resource and what talks to what:
 
 <p align="center">
   <a href=".github/assets/architecture.gif">
@@ -163,8 +136,6 @@ ingest runs hourly and feeds the live station layer, not the forecast.
 </p>
 
 The map is wide; open the image for full size.
-
-</details>
 
 The same map as Mermaid, the Step Functions definition as a state diagram, the detailed
 sequence with the approve, confirm and account steps, the trust boundaries and the list of
