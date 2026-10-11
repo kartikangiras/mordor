@@ -11,6 +11,7 @@ import { TIERS, type TierId } from '@/lib/aqi'
 import { istLabel } from '@/lib/time'
 import type { Manifest } from '@/lib/api'
 import { AmazonLogo, AwsLogo, NasaLogo } from './brandLogos'
+import { BACKDROPS, type BackdropId } from '@/config/backdrops'
 
 const AWS_STACK = [
   { file: 'lambda', label: 'Lambda' }, { file: 'step-functions', label: 'Step Functions' }, { file: 's3', label: 'S3' }, { file: 'cloudfront', label: 'CloudFront' },
@@ -19,21 +20,21 @@ const AWS_STACK = [
 const fmt = (n: number | null | undefined) => (n === null || n === undefined ? '—' : n.toLocaleString('en-IN'))
 const PEOPLE = Object.values(PERSONAS).length
 
-type Slide = { n: string; kicker: string; title: string; body: string; stat: (m: Manifest | null) => string; cap: string; cta: string; to: string; colour: string }
+type Slide = { n: string; kicker: string; title: string; body: string; stat: (m: Manifest | null) => string; cap: string; cta: string; to: string; colour: string; image: BackdropId; focus: string }
 const SLIDES: Slide[] = [
-  { n: '01', kicker: 'Punjab, tonight', title: 'The Fires', colour: '#ff6b35',
+  { n: '01', kicker: 'Punjab, tonight', title: 'The Fires', colour: '#ff6b35', image: 'fires', focus: '35% 45%',
     body: 'Every October the paddy stubble burns, and the satellites see it the same night. Each detection is a point on our map within three hours, sized by how hard it burns.',
     stat: (m) => fmt(m?.fires.count), cap: 'VIIRS detections, last 24 h', cta: 'View the fire map', to: '/map' },
-  { n: '02', kicker: 'The wind, the next two days', title: 'The Forecast', colour: '#ffb347',
+  { n: '02', kicker: 'The wind, the next two days', title: 'The Forecast', colour: '#ffb347', image: 'haze', focus: '40% 50%',
     body: 'Each fire becomes smoke parcels carried by the 925 hPa wind. Hour by hour, on a 5 km grid, the forecast says how much the fires will add on top of the city’s background, and when it arrives.',
     stat: (m) => (m ? `${m.hours.length - 1} h` : '—'), cap: 'ahead, every hour, 5 km cells', cta: 'Walk the chapters', to: '/story' },
-  { n: '03', kicker: 'Who is underneath it', title: 'The Schools', colour: '#10b981',
+  { n: '03', kicker: 'Who is underneath it', title: 'The Schools', colour: '#10b981', image: 'night', focus: '45% 50%',
     body: 'The forecast is read at every school in the domain, through school hours and dismissal, and turned into a tier a principal can act on: normal, caution, indoors, restrict, closure advisory.',
     stat: (m) => fmt(m?.schools?.named), cap: 'schools on the map', cta: 'See the exposure zones', to: '/zones' },
-  { n: '04', kicker: 'The next morning', title: 'The Check', colour: '#818cf8',
+  { n: '04', kicker: 'The next morning', title: 'The Check', colour: '#818cf8', image: 'clear', focus: '40% 45%',
     body: 'Every run is scored against the monitors the next day. The fit, its errors and its interval sit on the validation page and in the footer of every card, bad days included.',
     stat: (m) => fmt(m?.calibration.stations), cap: 'stations in the hindcast', cta: 'Read the validation', to: '/validation' },
-  { n: '05', kicker: 'What was done about it', title: 'The Decision', colour: '#e8ebef',
+  { n: '05', kicker: 'What was done about it', title: 'The Decision', colour: '#e8ebef', image: 'night', focus: '48% 58%',
     body: 'A principal acknowledges, a colony closes its park, an officer verifies against the station. Every step leaves a plain record with a name and a time, and the next day’s check closes it.',
     stat: () => String(PEOPLE), cap: 'people in the loop, analyst to verifier', cta: 'See the decisions', to: '/records' },
 ]
@@ -104,7 +105,9 @@ export default function Landing({ error }: { error: string | null }) {
         {/* chapters */}
         {SLIDES.map((s, i) => (
           <section key={s.n} data-stop={i + 1} className="reveal relative flex h-full snap-start items-center px-6 max-sm:items-end max-sm:pb-24">
-            <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(11,13,16,0) 35%, rgba(11,13,16,0.6) 70%, rgba(11,13,16,0.85) 100%)' }} />
+            <img src={BACKDROPS[s.image].src} alt="" loading="lazy" decoding="async" data-slide-image={s.image} className="pointer-events-none absolute inset-0 h-full w-full object-cover" style={{ objectPosition: s.focus, filter: 'brightness(.62) saturate(.9)', backgroundImage: `url(${BACKDROPS[s.image].lqip})`, backgroundSize: 'cover' }} />
+            <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(11,13,16,0.15) 0%, rgba(11,13,16,0.35) 40%, rgba(11,13,16,0.8) 75%, rgba(11,13,16,0.92) 100%)' }} />
+            <div className="pointer-events-none absolute bottom-16 left-6 font-mono text-[9.5px] uppercase tracking-[0.14em] text-fg/35 max-sm:hidden">{BACKDROPS[s.image].credit}</div>
             <div className="card glass relative ml-auto w-[min(520px,100%)] p-8 max-sm:p-6 lg:mr-[4vw]">
               <div className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: s.colour }}>■ Chapter {s.n}</div>
               <div className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-mute">{s.kicker}</div>
