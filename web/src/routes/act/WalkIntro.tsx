@@ -6,7 +6,7 @@ import ChapterNav from '@/components/Chapters/ChapterNav'
 import TimeSlider from '@/components/Map/TimeSlider'
 import { STORY_COUNT } from '@/config/chapters'
 import { demoMode } from '@/lib/auth'
-import { EXP_STEPS, readProgress, stepOpen } from '@/lib/experience'
+import { EXP_STEPS, readProgress, stepOpen, walkComplete, writeProgress, writeWalk } from '@/lib/experience'
 import { useStore } from '@/lib/store'
 
 export default function WalkIntro() {
@@ -17,9 +17,17 @@ export default function WalkIntro() {
   const done = readProgress()
   const firstOpen = EXP_STEPS.findIndex((_, i) => !done[i] && stepOpen(i, done))
   const resume = firstOpen > 0
+  // a finished cycle ends in a choice: read its report, or run another plan for another area
+  const complete = walkComplete(done)
+  const restart = () => { writeProgress({}); writeWalk({ school: null, area: null }); navigate('/act/walk/1') }
   return (
     <>
-      <ChapterNav mode="intro" lastLabel={resume ? `Continue at step ${firstOpen + 1}` : 'Begin the walkthrough'} onLast={() => navigate(`/act/walk/${Math.max(1, firstOpen + 1)}`)} />
+      <ChapterNav
+        mode="intro"
+        lastLabel={resume ? `Continue at step ${firstOpen + 1}` : 'Begin the walkthrough'}
+        onLast={() => navigate(`/act/walk/${Math.max(1, firstOpen + 1)}`)}
+        lastChoices={complete ? [{ label: 'See the last report', onClick: () => navigate('/act/walk/report'), primary: true }, { label: 'Start another action plan', onClick: restart }] : undefined}
+      />
       <TimeSlider />
     </>
   )

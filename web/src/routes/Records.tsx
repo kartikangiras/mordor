@@ -8,46 +8,11 @@ import type { EntityRecords, RecordsIndex } from '@/lib/protocol'
 import { useStore } from '@/lib/store'
 import { demoMode } from '@/lib/auth'
 import { DEMO_NOTE } from '@/lib/experience'
-import { TIERS } from '@/lib/aqi'
-import { istClock, istLabel } from '@/lib/time'
-import { dayStates, TYPE_LABELS, type DayState } from '@/lib/records'
+import { istLabel } from '@/lib/time'
+import { dayStates, TYPE_LABELS } from '@/lib/records'
 import DecisionList, { useEntityName } from '@/components/Records/DecisionList'
+import EntityCard from '@/components/Records/EntityCard'
 import PageBackdrop from '@/components/PageBackdrop'
-
-function Line({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
-  return (
-    <div className="contents">
-      <dt className="pt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-mute">{label}</dt>
-      <dd className={`pt-1.5 text-[13px] leading-snug ${muted ? 'text-mute' : 'text-fg'}`}>{value}</dd>
-    </div>
-  )
-}
-
-function EntityCard({ s, name }: { s: DayState; name: string }) {
-  const tier = s.tier ? TIERS[s.tier] : null
-  return (
-    <section className="glass glass-tight p-4" data-entity-card={s.entity}>
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <Link to={`/records/${encodeURIComponent(s.entity)}`} className="text-[15px] font-semibold text-fg hover:underline">{name}</Link>
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-mute">
-          <span>{TYPE_LABELS[s.actorType] ?? s.actorType}</span>
-          {tier && <span className="rounded px-1.5 py-0.5 font-semibold text-ink" style={{ background: tier.colour }}>{tier.label}</span>}
-        </div>
-      </div>
-      <dl className="mt-2 grid grid-cols-[86px_1fr] gap-x-3 border-t border-white/8">
-        <Line label="Forecast" value={s.forecast ? `${s.forecast.text} · run ${istClock(s.forecast.ts)}` : 'no card for today'} muted={!s.forecast} />
-        {s.advised
-          ? <Line label="Advised" value={s.advised.text} />
-          : s.registered
-            ? <Line label="Registered" value={`by ${s.registered.by}, ${istClock(s.registered.ts)}${s.registered.approved ? ' · approved' : ' · awaiting approval'}`} />
-            : <Line label="Advised" value="no advisory yet" muted />}
-        <Line label="Decided" value={s.decided ? `${s.decided.by} · ${s.decided.text} · ${istClock(s.decided.ts)}${s.decided.times > 1 ? ` · logged ${s.decided.times} times today` : ''}` : 'no decision yet'} muted={!s.decided} />
-        <Line label="Checked" value={s.checked ? `${s.checked.text}${s.checked.by ? ` · ${s.checked.by}, ${istClock(s.checked.ts)}` : ''}` : 'pending — the station confirms the day tomorrow'} muted={!s.checked} />
-        <Line label="Credited" value={s.credited ? s.credited.text : 'nothing credited yet'} muted={!s.credited} />
-      </dl>
-    </section>
-  )
-}
 
 export default function Records() {
   const { entity } = useParams()

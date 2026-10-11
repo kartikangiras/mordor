@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { authMode, demoMode, isSignedIn, roleHome, useAuth } from '@/lib/auth'
 import { DEMO_NOTE, PERSONAS } from '@/lib/experience'
+import Avatar from '@/components/Act/Avatar'
 
 export default function Door() {
   const auth = useAuth()
@@ -42,7 +43,7 @@ export default function Door() {
             <div className="grid gap-2 sm:grid-cols-2">
               {personas.map((p) => (
                 <button key={p.name} type="button" disabled={!!busy} onClick={async () => { setBusy(p.name); setErr(null); try { await auth.signInAs(p); navigate(roleHome(p.role)) } catch (e) { setErr((e as Error).message) } finally { setBusy(null) } }} className="glass glass-tight flex min-h-14 items-center gap-3 px-3 text-left transition hover:border-white/20 disabled:opacity-60">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base font-semibold" style={{ background: `${p.colour}22`, color: p.colour }}>{p.name.replace('Dr. ', '').replace('Ms. ', '')[0]}</span>
+                  <Avatar p={p} size={36} />
                   <span className="min-w-0"><span className="block truncate text-[13px] text-fg">{p.name} <span className="text-mute">· {p.title}</span></span><span className="block truncate font-mono text-[10px] text-mute">{p.org} · {p.role}</span></span>
                 </button>
               ))}

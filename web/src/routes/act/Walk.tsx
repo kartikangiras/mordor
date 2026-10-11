@@ -49,8 +49,9 @@ export default function Walk() {
     // the school step keeps the area chosen in step 1; the other operators work at their own entity
     if (ent && st.id !== 'community') setArea({ id: `entity-${ent.properties.id}`, name: ent.properties.name, lat: ent.geometry.coordinates[1], lon: ent.geometry.coordinates[0], radiusKm: ent.properties.type === 'agri_officer' ? (ent.properties.radiusKm ?? 45) : 15, kind: ent.properties.type === 'agri_officer' ? 'district' : 'city', region: ent.properties.typeLabel })
     else if (!useStore.getState().area) {
-      let start = AREAS[0]
-      if (fires) { const counts = AREAS.map((a) => ({ a, n: fires.features.filter((f) => haversineKm(a.lat, a.lon, f.geometry.coordinates[1], f.geometry.coordinates[0]) <= a.radiusKm).length })); start = counts.sort((x, y) => y.n - x.n)[0]?.a ?? start }
+      const saved = readWalk().area
+      let start = saved ?? AREAS[0]
+      if (!saved && fires) { const counts = AREAS.map((a) => ({ a, n: fires.features.filter((f) => haversineKm(a.lat, a.lon, f.geometry.coordinates[1], f.geometry.coordinates[0]) <= a.radiusKm).length })); start = counts.sort((x, y) => y.n - x.n)[0]?.a ?? start }
       setArea(start)
     }
     setExpStep(step)
@@ -63,17 +64,19 @@ export default function Walk() {
   // a step's calls must go out as its own persona: the switch is a real sign-in, so wait for it
   const asPersona = auth.persona === persona.name
   const next = () => { const done = { ...complete, [step]: true }; setComplete(done); writeProgress(done); if (step < EXP_STEPS.length - 1) navigate(`/act/walk/${step + 2}`) }
-  const startOver = () => { writeProgress({}); setComplete({}); writeWalk({ school: null }); setSchool(null); navigate('/act/walk/1') }
+  const startOver = () => { writeProgress({}); setComplete({}); writeWalk({ school: null, area: null }); setSchool(null); navigate('/act/walk/1') }
   const leave = () => navigate('/map')
+  // the last step hands over to nobody: finishing it completes the cycle, then the report
+  const finish = () => { next(); navigate('/act/walk/report') }
   const common = { area: area ?? AREAS[0], d, headers, onComplete: next, colour: persona.colour, school, onSchool }
-  const body = st.id === 'landscape' ? <StepLandscape {...common} onArea={setArea} />
+  const body = st.id === 'landscape' ? <StepLandscape {...common} onArea={(a) => { setArea(a); writeWalk({ area: a }) }} />
     : st.id === 'community' ? <StepCommunity {...common} />
     : st.id === 'inspection' ? <StepInspection {...common} />
     : st.id === 'plan' ? <StepPlan {...common} />
     : st.id === 'work' ? <StepWork {...common} />
     : st.id === 'proof' ? <StepProof {...common} />
     : st.id === 'value' ? <StepValue {...common} />
-    : <StepHealth {...common} onLeave={leave} />
+    : <StepHealth {...common} onLeave={finish} />
   const doneCount = EXP_STEPS.filter((_, i) => complete[i]).length
   return (
     <>

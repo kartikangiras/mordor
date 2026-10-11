@@ -2,16 +2,16 @@
 // with a mission in our own words, and each ends with a decision that leaves a plain record.
 import type { LayerId } from '@/config/layers'
 
-export interface Persona { name: string; title: string; org: string; role: 'analyst' | 'operator' | 'verifier' | 'auditor'; entityId: string | null; colour: string; email: string | null }
+export interface Persona { name: string; title: string; org: string; role: 'analyst' | 'operator' | 'verifier' | 'auditor'; entityId: string | null; colour: string; email: string | null; avatar: string }
 
 export const PERSONAS: Record<string, Persona> = {
-  Priya: { name: 'Priya', title: 'Forecast analyst', org: 'Mordor', role: 'analyst', entityId: null, colour: '#818CF8', email: 'priya.demo@example.com' },
-  Anita: { name: 'Anita', title: 'Principal', org: 'Kendriya Vidyalaya, Rohini', role: 'operator', entityId: 'osm-way-388242027', colour: '#FB923C', email: 'anita.demo@example.com' },
-  'Dr. Mehta': { name: 'Dr. Mehta', title: 'Air-quality officer', org: 'Delhi Pollution Control Committee', role: 'verifier', entityId: null, colour: '#10B981', email: 'mehta.demo@example.com' },
-  Gurpreet: { name: 'Gurpreet', title: 'District agriculture officer', org: 'Sangrur', role: 'operator', entityId: 'dao-demo-sangrur', colour: '#F59E0B', email: 'gurpreet.demo@example.com' },
-  Rekha: { name: 'Rekha', title: 'RWA secretary', org: 'Rohini Sector 3', role: 'operator', entityId: 'rwa-demo-rohini', colour: '#F472B6', email: 'rekha.demo@example.com' },
-  'Ms. Rao': { name: 'Ms. Rao', title: 'Deputy director', org: 'Directorate of Education', role: 'auditor', entityId: null, colour: '#60A5FA', email: 'rao.demo@example.com' },
-  'Dr. Kapoor': { name: 'Dr. Kapoor', title: 'Medical superintendent', org: 'District Hospital, Rohini', role: 'operator', entityId: 'hosp-demo-rohini', colour: '#F87171', email: 'kapoor.demo@example.com' },
+  Priya: { name: 'Priya', title: 'Forecast analyst', org: 'Mordor', role: 'analyst', entityId: null, colour: '#818CF8', email: 'priya.demo@example.com', avatar: '/avatars/priya.png' },
+  Anita: { name: 'Anita', title: 'Principal', org: 'Kendriya Vidyalaya, Rohini', role: 'operator', entityId: 'osm-way-388242027', colour: '#FB923C', email: 'anita.demo@example.com', avatar: '/avatars/anita.jpg' },
+  'Dr. Mehta': { name: 'Dr. Mehta', title: 'Air-quality officer', org: 'Delhi Pollution Control Committee', role: 'verifier', entityId: null, colour: '#10B981', email: 'mehta.demo@example.com', avatar: '/avatars/mehta.jpg' },
+  Gurpreet: { name: 'Gurpreet', title: 'District agriculture officer', org: 'Sangrur', role: 'operator', entityId: 'dao-demo-sangrur', colour: '#F59E0B', email: 'gurpreet.demo@example.com', avatar: '/avatars/gurpreet.jpg' },
+  Rekha: { name: 'Rekha', title: 'RWA secretary', org: 'Rohini Sector 3', role: 'operator', entityId: 'rwa-demo-rohini', colour: '#F472B6', email: 'rekha.demo@example.com', avatar: '/avatars/rekha.jpg' },
+  'Ms. Rao': { name: 'Ms. Rao', title: 'Deputy director', org: 'Directorate of Education', role: 'auditor', entityId: null, colour: '#60A5FA', email: 'rao.demo@example.com', avatar: '/avatars/rao.jpg' },
+  'Dr. Kapoor': { name: 'Dr. Kapoor', title: 'Medical superintendent', org: 'District Hospital, Rohini', role: 'operator', entityId: 'hosp-demo-rohini', colour: '#F87171', email: 'kapoor.demo@example.com', avatar: '/avatars/kapoor.jpg' },
 }
 
 export interface ExpStep {
@@ -49,8 +49,11 @@ export function writeProgress(p: Record<number, boolean>) { try { sessionStorage
 /** The school the visitor chose in step 2; steps 3 and 7 act on it. */
 export type SchoolPick = { id: string; name: string; name_hi?: string | null; lat: number; lon: number }
 const WALK_KEY = 'vd-walk'
-export function readWalk(): { school: SchoolPick | null } { try { return { school: null, ...JSON.parse(sessionStorage.getItem(WALK_KEY) ?? '{}') } } catch { return { school: null } } }
-export function writeWalk(w: { school: SchoolPick | null }) { try { sessionStorage.setItem(WALK_KEY, JSON.stringify(w)) } catch { /* private mode */ } }
+export type WalkState = { school: SchoolPick | null; area: import('@/config/areas').Area | null }
+export function readWalk(): WalkState { try { return { school: null, area: null, ...JSON.parse(sessionStorage.getItem(WALK_KEY) ?? '{}') } } catch { return { school: null, area: null } } }
+/** Merge into what the walk remembers (the school of step 2, the area of step 1). */
+export function writeWalk(w: Partial<WalkState>) { try { sessionStorage.setItem(WALK_KEY, JSON.stringify({ ...readWalk(), ...w })) } catch { /* private mode */ } }
+export function walkComplete(p = readProgress()): boolean { return EXP_STEPS.every((_, i) => !!p[i]) }
 /** Steps unlock one at a time: i is open when every step before it is complete. */
 export function stepOpen(i: number, complete: Record<number, boolean>): boolean { for (let k = 0; k < i; k++) if (!complete[k]) return false; return true }
 

@@ -9,6 +9,7 @@ import Queue from './routes/act/Queue'
 import Impact from './routes/act/Impact'
 import Walk from './routes/act/Walk'
 import WalkIntro from './routes/act/WalkIntro'
+import WalkReport from './routes/act/WalkReport'
 import SchoolPublic from './routes/SchoolPublic'
 import Validation from './routes/Validation'
 import Zones from './routes/Zones'
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       { path: 'act/card', element: <Card /> },
       { path: 'act/queue', element: <Queue /> },
       { path: 'act/impact', element: <Impact /> },
+      { path: 'act/walk/report', element: <WalkReport /> },
       { path: 'me', element: <Navigate to="/act" replace /> },
       { path: 'validation', element: <Validation /> },
       { path: 'zones', element: <Zones /> },

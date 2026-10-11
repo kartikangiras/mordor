@@ -19,7 +19,8 @@ import Legend from '@/components/Map/Legend'
 import { TIERS } from '@/lib/aqi'
 
 /** The story (chapters 1–6 at /story/:n) or the walkthrough's intro (chapters 7–8 at /act/walk). */
-export default function ChapterNav({ mode = 'story', lastLabel, onLast }: { mode?: 'story' | 'intro'; lastLabel?: string; onLast?: () => void } = {}) {
+export type LastChoice = { label: string; onClick: () => void; primary?: boolean }
+export default function ChapterNav({ mode = 'story', lastLabel, onLast, lastChoices }: { mode?: 'story' | 'intro'; lastLabel?: string; onLast?: () => void; lastChoices?: LastChoice[] } = {}) {
   const first = mode === 'story' ? 0 : STORY_COUNT
   const end = mode === 'story' ? STORY_COUNT - 1 : chapters.length - 1
   const chapter = useStore((s) => s.chapter)
@@ -70,7 +71,8 @@ export default function ChapterNav({ mode = 'story', lastLabel, onLast }: { mode
     const demo = manifest.demoSchools?.find((d) => d.startsWith('osm-')) ?? manifest.demoSchools?.[0]
     let alive = true
     ;(async () => {
-      const c = (worst ? await getSchoolCard(worst.properties.id) : null) ?? (demo ? await getPublicCard(manifest, demo) : null)
+      // a school the API cannot card (not in the domain, no run file) must not empty the chapter: fall through to the demo card
+      const c = (worst ? await getSchoolCard(worst.properties.id).catch(() => null) : null) ?? (demo ? await getPublicCard(manifest, demo) : null)
       if (!alive) return
       setCard(c)
       const f = worst && c?.schoolId === worst.properties.id ? worst : schools?.features.find((x) => x.properties.id === c?.schoolId)
@@ -119,7 +121,9 @@ export default function ChapterNav({ mode = 'story', lastLabel, onLast }: { mode
         {keyOpen && <div className="mt-2 max-h-56 overflow-y-auto rounded-lg bg-black/25 p-2"><Legend inline /></div>}
         <div className="mt-4 flex items-center gap-2">
           <button type="button" onClick={() => go(chapter - 1)} disabled={chapter === first} className="hairline h-10 rounded-lg px-3 text-[12px] font-medium text-fg hover:bg-white/5 disabled:opacity-40">← prev</button>
-          {!(last && mode === 'story') && <button type="button" onClick={() => (last ? finish() : go(chapter + 1))} className="h-10 flex-1 rounded-lg bg-fire px-3 text-[12px] font-semibold text-ink hover:bg-[#ffc46a]">{last ? (lastLabel ?? 'Open the map') : 'next →'}</button>}
+          {last && mode === 'intro' && lastChoices?.length
+            ? <div className="flex flex-1 flex-wrap gap-2" data-walk-choices>{lastChoices.map((c) => <button key={c.label} type="button" onClick={c.onClick} className={`h-10 flex-1 rounded-lg px-3 text-[12px] font-semibold ${c.primary ? 'bg-fire text-ink hover:bg-[#ffc46a]' : 'hairline text-fg hover:bg-white/5'}`}>{c.label}</button>)}</div>
+            : !(last && mode === 'story') && <button type="button" onClick={() => (last ? finish() : go(chapter + 1))} className="h-10 flex-1 rounded-lg bg-fire px-3 text-[12px] font-semibold text-ink hover:bg-[#ffc46a]">{last ? (lastLabel ?? 'Open the map') : 'next →'}</button>}
           <button type="button" onClick={exit} className="hairline flex h-10 w-10 items-center justify-center rounded-lg text-mute hover:bg-white/5 hover:text-fg" title="Escape" aria-label={mode === 'story' ? 'Leave the story' : 'Back to the door'}><CloseIcon /></button>
         </div>
         <div className="mt-3 font-mono text-[10px] text-mute max-sm:hidden">shift + arrows · chapters &nbsp; space · play</div>
