@@ -14,5 +14,6 @@ put() {
 put firms_map_key   FIRMS_MAP_KEY
 put data_gov_api_key DATA_GOV_API_KEY
 put openaq_api_key  OPENAQ_API_KEY
+put anthropic_api_key ANTHROPIC_API_KEY
 put location_api_key LOCATION_API_KEY
 put ses_sender      SES_SENDER

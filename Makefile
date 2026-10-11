@@ -52,8 +52,9 @@ sam-validate:
 sam-build:
 	sam build -t infra/template.yaml --use-container
 
-seed-local:        ## copy committed static data (schools, calibration) into ./.data for local runs
+seed-local:        ## copy committed static data (schools, calibration, stations) into ./.data for local runs
 	mkdir -p .data/static .data/validation/latest
 	cp data/schools.geojson .data/static/schools.geojson
 	cp data/climatology_2024.json .data/static/climatology_2024.json
+	cp data/openaq_stations.json .data/static/openaq_stations.json
 	cp data/validation/latest/*.json .data/validation/latest/

@@ -31,6 +31,28 @@ def test_accounting_credits_only_confirmed_days():
     assert accounting.impact({"actorType": "rwa", "kind": "exposure", "outdoorHoursCancelled": 3.0}, {"actions": ["outdoor_off"]}, {"outcome": "confirmed"}, {"residents": 2400})["value"] == 2880
 
 
+def test_nearest_station_reads_the_index_through_storage(tmp_path, monkeypatch):
+    # nearest_station() used to read a hardcoded relative path (data/openaq_stations.json),
+    # which is not inside the Lambda package (CodeUri: ../services/) and left every outcome
+    # check as no_station in AWS. It must go through storage(), as every other static lookup
+    # does, so the index comes from S3 in AWS and .data/static/ locally (make seed-local).
+    from common import storage as st
+    from records.verification import nearest_station
+
+    monkeypatch.setenv("LOCAL_DATA_DIR", str(tmp_path))
+    monkeypatch.delenv("TABLE_NAME", raising=False)
+    st.reset()
+    assert nearest_station(28.7, 77.1) is None   # no index written yet: no crash, no match
+    st.storage().put_json("static/openaq_stations.json", {"stations": [
+        {"id": 1, "name": "Rohini", "lat": 28.70, "lon": 77.10},
+        {"id": 2, "name": "Sangrur", "lat": 30.25, "lon": 75.85},
+    ]})
+    near = nearest_station(28.71, 77.11)
+    assert near["id"] == 1 and near["name"] == "Rohini" and near["source"] == "openaq-archive"
+    assert nearest_station(30.0, 70.0) is None   # nearest is Sangrur, > 25 km away
+    st.reset()
+
+
 def test_outcome_assess():
     from records.verification import assess
 

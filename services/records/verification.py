@@ -6,15 +6,14 @@ from __future__ import annotations
 import csv
 import gzip
 import io
-import json
 import logging
 import math
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 
 import requests
 
 from common import aqi, ddb
+from common.storage import storage
 from common.timeutil import IST
 from protocol.rules import _hhmm, tier_rank
 
@@ -22,11 +21,10 @@ log = logging.getLogger(__name__)
 OPENAQ = "https://openaq-data-archive.s3.amazonaws.com/records/csv.gz/locationid={id}/year={y}/month={m}/location-{id}-{ymd}.csv.gz"
 
 
-def nearest_station(lat: float, lon: float, index_path: str = "data/openaq_stations.json", max_km: float = 25.0) -> dict | None:
-    try:
-        idx = json.loads(Path(index_path).read_text())["stations"]
-    except (OSError, ValueError, KeyError):
-        return None
+def nearest_station(lat: float, lon: float, max_km: float = 25.0) -> dict | None:
+    """The closest OpenAQ station in `static/openaq_stations.json` (the data bucket in AWS,
+    `.data/static/` locally - `make seed-local` or `tools/openaq_index.py` writes it)."""
+    idx = (storage().get_json("static/openaq_stations.json") or {}).get("stations", [])
     best, best_d = None, 1e9
     for s in idx:
         d = math.hypot((s["lat"] - lat) * 111.32, (s["lon"] - lon) * 111.32 * math.cos(math.radians(lat)))

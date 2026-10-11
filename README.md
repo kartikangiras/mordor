@@ -61,7 +61,7 @@ the card against the nearest monitoring station the next night, and credits impa
 the days the station confirmed.
 
 Built at the WeMakeDevs × AWS *Environmental Hacks* hackathon (Bharat Builds Tour, Track 01 — Air), 8–11 October 2026.
-Everything described here is running code in this repository, covered by 130 tests.
+Everything described here is running code in this repository, covered by 131 tests.
 
 <p align="center"><img src=".github/assets/landing.jpg" width="880" alt="The landing page over the live map" /></p>
 
@@ -198,7 +198,6 @@ The template also defines three things that are off unless configured: a USD 20 
 1. **Every number states where it came from.** Each card carries its run id and the calibration it was built with; each forecast record carries the fire count, the weather fetch, the fitted constant and the seed. [services/common/calibration.py](services/common/calibration.py), [services/sample/entities.py](services/sample/entities.py)
 2. **A range, not a guess.** Every forecast hour and the peak hour of concern carry a split-conformal 90 % band. The half-width is 209.7 µg/m³ over all leads (`conformal.q90`): 213.9 for hours 1–24 and 206.4 for hours 25–48 (`conformalByLead`). [services/protocol/interval.py](services/protocol/interval.py), [calibration.json](data/validation/latest/calibration.json)
 3. **Checked against the nearest station.** A nightly job at 03:00 IST compares each card's tier with the peak PM2.5 the nearest station within 25 km measured in the hours of concern. A check stays `pending` until the readings are published and is retried for seven days; an air-quality officer can also record the outcome with evidence. [services/records/verification.py](services/records/verification.py), [services/records/daily.py](services/records/daily.py), `RecordsDailyFn` in [infra/template.yaml](infra/template.yaml)
-   TODO(kartik): on the deployed stack the automatic check currently records `no_station` for every entity, because `nearest_station` reads `data/openaq_stations.json` and that file is not inside the Lambda package. Fix it or say so here before filming.
 4. **Impact only when the station confirms.** An impact statement is `verified` only when the outcome is `confirmed`; a false alarm or a moot day is `not_credited`; everything else stays `provisional`. [services/records/accounting.py](services/records/accounting.py)
 5. **The agent's message is checked in code.** Both languages present, Hindi in Devanagari, at most 400 characters, at most one leading emoji, none of the alarm words, a concrete clock time. A rejected draft gets one retry with the reasons, then the template is used. [services/notify/validate.py](services/notify/validate.py), [services/notify/service.py](services/notify/service.py), [services/notify/fallback.py](services/notify/fallback.py)
 6. **Public records, no contact details.** Records are contact-free by construction and stripped again on the way out; phone numbers and emails stay in DynamoDB; the real onboarding file is git-ignored. [services/records/store.py](services/records/store.py), [tools/seed_actors.py](tools/seed_actors.py), [data/onboarded.example.json](data/onboarded.example.json)
@@ -276,7 +275,7 @@ git clone https://github.com/kartikangiras/mordor && cd mordor
 cp .env.example .env            # add a NASA FIRMS MAP_KEY; the rest is optional locally
 
 make venv                       # Python 3.12 via uv, dev dependencies
-make test                       # 130 tests
+make test                       # 131 tests
 make ingest-firms               # real VIIRS fires for the domain → ./.data
 make ingest-weather             # Open-Meteo winds + boundary layer + CAMS background → ./.data
 make forecast-local HOURS=48    # the particle run: overlays, grids, cards → web/public/dev
@@ -300,9 +299,6 @@ The demo personas are seven Cognito users with a shared password, created on a d
 `tools/demo_users.sh create <password>` and removed with `delete`; records they write name the
 persona in `by.persona`, and the fictional entities carry `demo: true`. A production stack never
 runs `create`.
-
-TODO(kartik): `tools/put_secrets.sh` writes the FIRMS, data.gov.in, OpenAQ, Location and SES
-values. It does not write `/mordor/anthropic_api_key`; add the command used for it.
 
 ### Configuration
 
@@ -334,14 +330,14 @@ are never in the template and never in git.
 | A slow or failing model cannot take the card down: one call, a 15 s read timeout, then the template | `_invoke_notify` in [services/api/routes/principal.py](services/api/routes/principal.py) |
 | Both buckets are private; CloudFront reads only `runs/`, `static/`, `validation/` and `records/` of the data bucket | `DataBucketPolicy`, `OriginAccessControl` in [infra/template.yaml](infra/template.yaml) |
 | Raw inputs expire after 45 days and runs after 30 | `LifecycleConfiguration` of `DataBucket` in [infra/template.yaml](infra/template.yaml) |
-| CI on every push and pull request: ruff, 130 tests, a strict TypeScript build, `sam validate --lint`, and a grep for anything shaped like a key | [.github/workflows/ci.yml](.github/workflows/ci.yml) |
+| CI on every push and pull request: ruff, 131 tests, a strict TypeScript build, `sam validate --lint`, and a grep for anything shaped like a key | [.github/workflows/ci.yml](.github/workflows/ci.yml) |
 
 ## Testing
 
 | Check | Command | What it covers |
 |---|---|---|
 | Lint | `make lint` | ruff over `services/`, `tools/`, `tests/` |
-| Python | `make test` | the forecast, protocol, records, notify, API routes (130 tests) |
+| Python | `make test` | the forecast, protocol, records, notify, API routes (131 tests) |
 | Web | `cd web && npm run build` | strict TypeScript, no unused locals, production build |
 | Infra | `sam validate --lint --template infra/template.yaml` | the stack |
 | Browser | Playwright smoke suites (headless Chrome) | every surface, the actor door and the eight-step walkthrough against a dev server proxied to the live API. TODO(kartik): the suites are not in this repository; add them or drop this row |
