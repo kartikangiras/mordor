@@ -53,3 +53,6 @@ export function readWalk(): { school: SchoolPick | null } { try { return { schoo
 export function writeWalk(w: { school: SchoolPick | null }) { try { sessionStorage.setItem(WALK_KEY, JSON.stringify(w)) } catch { /* private mode */ } }
 /** Steps unlock one at a time: i is open when every step before it is complete. */
 export function stepOpen(i: number, complete: Record<number, boolean>): boolean { for (let k = 0; k < i; k++) if (!complete[k]) return false; return true }
+
+/** Said once, where it matters (PIVOT_PLAN.md task 48): the demo entities and people are fictional; the air is real. */
+export const DEMO_NOTE = 'Rohini Sector 3 RWA, District Hospital Rohini and the Sangrur office are fictional, and the people who act on them are the seven walkthrough personas; forecasts, stations and schools are real.'

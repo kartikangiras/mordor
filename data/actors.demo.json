@@ -5,17 +5,17 @@
     "students": 1200, "demo": true, "persona": "Anita"
   },
   {
-    "id": "rwa-demo-rohini", "type": "rwa", "name": "Rohini Sector 3 RWA (demo)", "name_hi": "रोहिणी सेक्टर 3 आरडब्ल्यूए",
+    "id": "rwa-demo-rohini", "type": "rwa", "name": "Rohini Sector 3 RWA", "name_hi": "रोहिणी सेक्टर 3 आरडब्ल्यूए",
     "lat": 28.708, "lon": 77.112, "hours": ["06:00", "09:00"], "dismissal": ["17:00", "21:00"], "hasPurifiers": false,
     "residents": 2400, "demo": true, "persona": "Rekha"
   },
   {
-    "id": "hosp-demo-rohini", "type": "hospital", "name": "District Hospital, Rohini (demo)", "name_hi": "ज़िला अस्पताल, रोहिणी",
+    "id": "hosp-demo-rohini", "type": "hospital", "name": "District Hospital, Rohini", "name_hi": "ज़िला अस्पताल, रोहिणी",
     "lat": 28.716, "lon": 77.117, "hours": ["06:00", "14:00"], "dismissal": ["14:00", "22:00"], "hasPurifiers": true,
     "beds": 40, "demo": true, "persona": "Dr. Kapoor"
   },
   {
-    "id": "dao-demo-sangrur", "type": "agri_officer", "name": "District Agriculture Office, Sangrur (demo)", "name_hi": "ज़िला कृषि कार्यालय, संगरूर",
+    "id": "dao-demo-sangrur", "type": "agri_officer", "name": "District Agriculture Office, Sangrur", "name_hi": "ज़िला कृषि कार्यालय, संगरूर",
     "lat": 30.25, "lon": 75.84, "district": "Sangrur", "radiusKm": 45, "machines": 180, "demo": true, "persona": "Gurpreet"
   }
 ]

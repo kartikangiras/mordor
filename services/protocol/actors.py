@@ -139,11 +139,11 @@ ROLES = {
 PERSONAS = [
     {"name": "Priya", "role": "analyst", "title": "Forecast analyst", "org": "Mordor", "entityId": None, "email": "priya.demo@example.com"},
     {"name": "Anita", "role": "operator", "title": "Principal", "org": "Kendriya Vidyalaya, Rohini", "entityId": "osm-way-388242027", "email": "anita.demo@example.com"},
-    {"name": "Rekha", "role": "operator", "title": "RWA secretary", "org": "Rohini Sector 3 RWA (demo)", "entityId": "rwa-demo-rohini", "email": "rekha.demo@example.com"},
-    {"name": "Gurpreet", "role": "operator", "title": "District agriculture officer", "org": "Sangrur (demo)", "entityId": "dao-demo-sangrur", "email": "gurpreet.demo@example.com"},
-    {"name": "Dr. Mehta", "role": "verifier", "title": "Air-quality officer", "org": "DPCC (demo)", "entityId": None, "email": "mehta.demo@example.com"},
-    {"name": "Ms. Rao", "role": "auditor", "title": "Deputy director", "org": "Directorate of Education (demo)", "entityId": None, "email": "rao.demo@example.com"},
-    {"name": "Dr. Kapoor", "role": "operator", "title": "Medical superintendent", "org": "District Hospital, Rohini (demo)", "entityId": "hosp-demo-rohini", "email": "kapoor.demo@example.com"},
+    {"name": "Rekha", "role": "operator", "title": "RWA secretary", "org": "Rohini Sector 3 RWA", "entityId": "rwa-demo-rohini", "email": "rekha.demo@example.com"},
+    {"name": "Gurpreet", "role": "operator", "title": "District agriculture officer", "org": "Sangrur", "entityId": "dao-demo-sangrur", "email": "gurpreet.demo@example.com"},
+    {"name": "Dr. Mehta", "role": "verifier", "title": "Air-quality officer", "org": "DPCC", "entityId": None, "email": "mehta.demo@example.com"},
+    {"name": "Ms. Rao", "role": "auditor", "title": "Deputy director", "org": "Directorate of Education", "entityId": None, "email": "rao.demo@example.com"},
+    {"name": "Dr. Kapoor", "role": "operator", "title": "Medical superintendent", "org": "District Hospital, Rohini", "entityId": "hosp-demo-rohini", "email": "kapoor.demo@example.com"},
 ]
 
 

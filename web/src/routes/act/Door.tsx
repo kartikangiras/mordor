@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { authMode, demoMode, isSignedIn, roleHome, useAuth } from '@/lib/auth'
-import { PERSONAS } from '@/lib/experience'
+import { DEMO_NOTE, PERSONAS } from '@/lib/experience'
 
 export default function Door() {
   const auth = useAuth()
@@ -38,7 +38,7 @@ export default function Door() {
 
         {auth.ready && demoMode && (
           <div className="mt-5">
-            <div className="mb-2 flex items-baseline justify-between"><div className="text-[13px] font-medium text-fg">Try it as one of the seven</div><span className="font-mono text-[10px] uppercase tracking-wider text-mute">demo</span></div>
+            <div className="mb-2 text-[13px] font-medium text-fg">Try it as one of the seven</div>
             <div className="grid gap-2 sm:grid-cols-2">
               {personas.map((p) => (
                 <button key={p.name} type="button" disabled={!!busy} onClick={async () => { setBusy(p.name); setErr(null); try { await auth.signInAs(p); navigate(roleHome(p.role)) } catch (e) { setErr((e as Error).message) } finally { setBusy(null) } }} className="glass glass-tight flex min-h-14 items-center gap-3 px-3 text-left transition hover:border-white/20 disabled:opacity-60">
@@ -51,6 +51,7 @@ export default function Door() {
             {busy && <div className="mt-2 font-mono text-[11px] text-mute">signing in as {busy}…</div>}
             <Link to="/act/walk" className="mt-3 flex h-12 items-center justify-center gap-3 rounded-full bg-fire px-6 text-[14px] font-semibold text-ink transition hover:bg-[#ffc46a]">Start the walkthrough <span className="h-2 w-2 animate-pulse rounded-full bg-[#d7263d]" /></Link>
             <div className="mt-2 text-center font-mono text-[10px] text-mute">eight steps · seven people · a record at every step</div>
+            <p className="mt-4 font-mono text-[10.5px] leading-relaxed text-mute" data-demo-note>{DEMO_NOTE}</p>
           </div>
         )}
       </div>

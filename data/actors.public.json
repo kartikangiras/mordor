@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-10T20:07:12Z",
+ "generatedAt": "2026-10-11T13:19:00Z",
  "entities": [
   {
    "id": "osm-way-388242027",
@@ -25,7 +25,7 @@
   {
    "id": "rwa-demo-rohini",
    "type": "rwa",
-   "name": "Rohini Sector 3 RWA (demo)",
+   "name": "Rohini Sector 3 RWA",
    "name_hi": "रोहिणी सेक्टर 3 आरडब्ल्यूए",
    "lat": 28.708,
    "lon": 77.112,
@@ -46,7 +46,7 @@
   {
    "id": "hosp-demo-rohini",
    "type": "hospital",
-   "name": "District Hospital, Rohini (demo)",
+   "name": "District Hospital, Rohini",
    "name_hi": "ज़िला अस्पताल, रोहिणी",
    "lat": 28.716,
    "lon": 77.117,
@@ -67,7 +67,7 @@
   {
    "id": "dao-demo-sangrur",
    "type": "agri_officer",
-   "name": "District Agriculture Office, Sangrur (demo)",
+   "name": "District Agriculture Office, Sangrur",
    "name_hi": "ज़िला कृषि कार्यालय, संगरूर",
    "lat": 30.25,
    "lon": 75.84,

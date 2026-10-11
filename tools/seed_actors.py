@@ -67,7 +67,7 @@ def main() -> int:
             records.append("enrol", e["id"], {"type": e["type"], "name": e["name"], "lat": e["lat"], "lon": e["lon"],
                                               "hours": e.get("hours"), "dismissal": e.get("dismissal"), "district": e.get("district"),
                                               "people": e.get("students") or e.get("residents") or e.get("machines") or e.get("beds"), "demo": bool(e.get("demo")),
-                                              "persona": e.get("persona"), "verifiedBy": "registry (demo)" if e.get("demo") else "pending verifier approval"},
+                                              "persona": e.get("persona"), "verifiedBy": "registry" if e.get("demo") else "pending verifier approval"},
                           e["type"], by={"role": "operator", "persona": e.get("persona")}, store=lstore)
             n_led += 1
         print(f"{n_led} EntityRegistration records written")
