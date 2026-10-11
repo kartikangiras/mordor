@@ -5,3 +5,14 @@ addopts = "-q"
 
 [tool.ruff]
 line-length = 100
+target-version = "py312"
+extend-exclude = [".aws-sam", ".venv", "web"]
+
+[tool.ruff.lint]
+# pyflakes, pycodestyle errors, isort, pyupgrade, bugbear, simplify. E501 is left to review:
+# the hackathon code has long data lines, and a reflow would hide every real diff.
+select = ["F", "E", "W", "I", "UP", "B", "SIM"]
+ignore = ["E501", "B008", "SIM102", "SIM108", "SIM117", "UP017"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["common", "api", "forecast", "ingest_firms", "ingest_weather", "ingest_cpcb", "render", "sample", "protocol", "records", "notify", "zones"]

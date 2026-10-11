@@ -1,0 +1,19 @@
+# pre-commit install  → ruff on every commit, plus the usual hygiene hooks
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.6
+    hooks:
+      - id: ruff
+        args: [--fix]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+        exclude: ^infra/template\.yaml$   # CloudFormation tags
+      - id: check-added-large-files
+        args: [--maxkb=2048]
+      - id: detect-private-key
