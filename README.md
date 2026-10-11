@@ -24,8 +24,7 @@ delivered to the schools, residents' associations, district offices and hospital
 <p align="center">
   <strong>Live demo:</strong> <a href="https://d3mp6hbfwg9kx1.cloudfront.net">d3mp6hbfwg9kx1.cloudfront.net</a> ·
   <strong>Try the walkthrough:</strong> <a href="https://d3mp6hbfwg9kx1.cloudfront.net/act/walk">/act/walk</a> ·
-  <strong>Demo film:</strong> TODO(kartik): YouTube link ·
-  <strong>Architecture:</strong> <a href="docs/architecture.md">docs/architecture.md</a> ·
+  <strong>Demo film:</strong> <a href="https://youtu.be/yF6-6ZJJ2zc">youtu.be/yF6-6ZJJ2zc</a> ·
   <strong>Validation report:</strong> <a href="data/validation/latest/report.json">report.json</a> ·
   <strong>Run locally:</strong> <code>make venv && make test</code>
 </p>
@@ -136,10 +135,6 @@ ingest runs hourly and feeds the live station layer, not the forecast.
 </p>
 
 The map is wide; open the image for full size.
-
-The same map as Mermaid, the Step Functions definition as a state diagram, the detailed
-sequence with the approve, confirm and account steps, the trust boundaries and the list of
-what a run writes are in [docs/architecture.md](docs/architecture.md).
 
 ### Two identities, one map
 
@@ -340,9 +335,8 @@ are never in the template and never in git.
 | Python | `make test` | the forecast, protocol, records, notify, API routes (131 tests) |
 | Web | `cd web && npm run build` | strict TypeScript, no unused locals, production build |
 | Infra | `sam validate --lint --template infra/template.yaml` | the stack |
-| Browser | Playwright smoke suites (headless Chrome) | every surface, the actor door and the eight-step walkthrough against a dev server proxied to the live API. TODO(kartik): the suites are not in this repository; add them or drop this row |
 
-CI runs the first four on every push and pull request, plus a grep for anything shaped like a key.
+CI runs all four on every push and pull request, plus a grep for anything shaped like a key.
 
 ## Project structure
 
@@ -411,11 +405,3 @@ either exposed, that is a vulnerability.
 ## License
 
 Released under the [MIT License](LICENSE).
-
-## Acknowledgements
-
-Fire detections courtesy of NASA FIRMS · background PM2.5 from Copernicus CAMS · winds from
-Open-Meteo · stations via OpenAQ · NDVI from NASA GIBS · schools and basemap data © OpenStreetMap
-contributors · map tiles by OpenFreeMap · imagery © Esri · page backdrops from NASA Worldview (GIBS), public
-domain. Built on AWS with the Strands Agents SDK.
-Not affiliated with or endorsed by NASA, Amazon or AWS.
