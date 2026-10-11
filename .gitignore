@@ -1,0 +1,37 @@
+# Secrets and local configuration: never committed (keys live in SSM, see AWS_INTEGRATION.md)
+.env
+.env.*
+!.env.example
+web/.env
+web/.env.*
+!web/.env.example
+
+# Local data and build artefacts
+.data/
+.aws-sam/
+web/public/dev/
+web/dist/
+web/node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.log
+
+# Real people's contact details never enter git (data/onboarded.example.json shows the shape)
+data/onboarded.json
+data/actors.json
+
+# Logo source renders (the derived brand assets in web/public/brand are tracked)
+logos/
+
+# Internal notes: README.md is the only markdown that ships. The design log, the AWS runbook,
+# the pivot plan, the contributing and security notes all stay local.
+*.md
+!/README.md
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
